@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Priprema za nastavni čas V6.0</title>
+<style>
+  :root {
+    --plava: #1e4d8b;
+    --plava-tamna: #163a68;
+    --plava-svijetla: #2f6bb5;
+    --siva: #eef1f6;
+    --border: #dbe2ea;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--siva);
+    background-image: radial-gradient(circle at 15% 0%, #e4ecf9 0%, var(--siva) 45%);
+    margin: 0;
+    padding: 24px;
+    color: #222;
+  }
+  .wrap { max-width: 950px; margin: 0 auto; }
+  h1 {
+    background: linear-gradient(90deg, var(--plava) 0%, var(--plava-svijetla) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 25px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    letter-spacing: 0.2px;
+  }
+  .podnaslov { color: #667; margin-bottom: 26px; font-size: 14px; }
+
+  .panel {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 6px rgba(30, 77, 139, 0.06), 0 8px 24px rgba(30, 77, 139, 0.05);
+    transition: box-shadow 0.2s ease;
+  }
+  .panel:hover {
+    box-shadow: 0 2px 8px rgba(30, 77, 139, 0.08), 0 10px 28px rgba(30, 77, 139, 0.08);
+  }
+  .panel h2 {
+    font-size: 15px;
+    color: var(--plava);
+    margin-top: 0;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 12px;
+    margin-bottom: 4px;
+    color: #333;
+  }
+  input[type=text], input[type=password], input[type=date], select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #fbfcfe;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+  input[type=text]:hover, input[type=password]:hover, input[type=date]:hover, select:hover {
+    border-color: var(--plava-svijetla);
+  }
+  input[type=text]:focus, input[type=password]:focus, input[type=date]:focus, select:focus {
+    outline: none;
+    border-color: var(--plava);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(30, 77, 139, 0.12);
+  }
+  .red2 { display: flex; gap: 16px; }
+  .red2 > div { flex: 1; }
+  .radio-grupa { display: flex; gap: 18px; margin-top: 6px; font-size: 14px; }
+  .radio-grupa label {
+    display: flex; align-items: center; gap: 6px; font-weight: 400; margin: 0;
+    padding: 6px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .radio-grupa label:hover { border-color: var(--plava-svijetla); background: #f5f9fe; }
+
+  .dugmad { display: flex; gap: 6px; margin-top: 22px; flex-wrap: wrap; }
+  button {
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: transform 0.12s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+  button:hover { transform: translateY(-1px); }
+  button:active { transform: translateY(0); }
+  #generisi {
+    background: linear-gradient(135deg, var(--plava) 0%, var(--plava-svijetla) 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(30, 77, 139, 0.28);
+  }
+  #generisi:hover { box-shadow: 0 6px 16px rgba(30, 77, 139, 0.36); }
+  #izvezWord, #izvezi { background: #e8edf5; color: var(--plava); display: none; }
+  #izvezWord:hover, #izvezi:hover { background: #d5deec; box-shadow: 0 3px 10px rgba(30, 77, 139, 0.14); }
+  button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  #pitajAI { background: #1a73e8; color: #fff; }
+  #pitajAI:hover { background: #1557b0; box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3); }
+
+  .napomena {
+    font-size: 12px;
+    color: #778;
+    margin-top: 6px;
+  }
+
+  #status { margin-top: 12px; font-size: 13px; font-weight: 600; }
+  #status.err { color: #b00020; }
+  #status.ok { color: #157a3d; }
+
+  #rezultat-wrap { display: none; }
+
+  .upozorenje {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: #fff6e0;
+    border: 1px solid #f0d38a;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: #6b5400;
+    line-height: 1.5;
+  }
+  .upozorenje .ikona-upoz { font-size: 17px; line-height: 1; margin-top: 1px; }
+
+  #provjeraCinjenica { background: #fdeeee; color: #a13a3a; }
+  #provjeraCinjenica:hover { background: #f9dcdc; box-shadow: 0 3px 10px rgba(161, 58, 58, 0.14); }
+
+  #provjeraRezultat {
+    display: none;
+    margin-top: 16px;
+    background: #fbfbfe;
+    border: 1px solid #dcdff0;
+    border-left: 4px solid #6a5acd;
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  #provjeraRezultat h3 {
+    margin: 0 0 8px 0;
+    font-size: 13.5px;
+    color: #4b3f9e;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  #provjeraRezultat ul { margin: 6px 0; padding-left: 20px; }
+
+  @media print {
+    .upozorenje, #provjeraRezultat, #provjeraCinjenica { display: none !important; }
+  }
+
+  #rezultat {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 32px 42px;
+    line-height: 1.55;
+    font-size: 14.5px;
+    box-shadow: 0 2px 6px rgba(30, 77, 139, 0.06), 0 8px 24px rgba(30, 77, 139, 0.05);
+  }
+  #rezultat h2 {
+    color: var(--plava);
+    font-size: 16px;
+    margin-top: 26px;
+    margin-bottom: 8px;
+    border-bottom: 2px solid var(--plava);
+    padding-bottom: 4px;
+  }
+  #rezultat h2:first-child { margin-top: 0; }
+  #rezultat h3 {
+    font-size: 14.5px;
+    margin-top: 16px;
+    margin-bottom: 6px;
+    color: #333;
+  }
+  #rezultat p { margin: 6px 0; }
+  #rezultat ul, #rezultat ol { margin: 6px 0; padding-left: 22px; }
+  #rezultat strong { color: #111; }
+
+  .spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid #ffffff66;
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: -2px;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media print {
+    body { background: none; padding: 0; }
+    .panel, .dugmad, #status, h1, .podnaslov { display: none !important; }
+    #rezultat-wrap { display: block !important; }
+    #rezultat { border: none; padding: 0; box-shadow: none; }
+
+    @page {
+      margin: 15mm;
+    }
+
+    .naslov-pripreme {
+      display: block !important;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: var(--plava);
+      margin: 0 0 22px 0;
+    }
+  }
+
+  .naslov-pripreme { display: none; }
+
+  @media (max-width: 640px) {
+    body { padding: 14px; }
+    h1 { font-size: 20px; }
+    .panel { padding: 16px 16px; border-radius: 12px; }
+    .red2 { flex-direction: column; gap: 0; }
+    .radio-grupa { flex-wrap: wrap; gap: 10px; }
+    .dugmad { flex-direction: column; }
+    .dugmad button { width: 100%; }
+    #rezultat { padding: 20px 18px; }
+  }
+</style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+<div class="wrap">
+  <h1>Priprema za nastavni čas </h1>
+  <div class="podnaslov">Generisanje nastavnih pripreme za čas prema propisanom obrascu korištenjem platforme Groq AI ili Google Gemini</div>
+
+  <div class="panel">
+    <h2>🔑 AI platforma</h2>
+    <label for="aiPlatforma">Izaberi platformu</label>
+    <select id="aiPlatforma">
+      <option value="groq">Groq (Llama / GPT-OSS)</option>
+      <option value="gemini">Google Gemini</option>
+    </select>
+
+    <div id="grupaGroq" style="margin-top:12px;">
+      <label for="apiKeyGroq">Groq API ključ</label>
+      <input type="password" id="apiKeyGroq" placeholder="gsk_...">
+      <div class="napomena">Ključ se čuva samo lokalno u browseru (localStorage) i šalje se isključivo direktno ka Groq serverima.</div>
+    </div>
+
+    <div id="grupaGemini" style="margin-top:12px; display:none;">
+      <label for="apiKeyGemini">Gemini API ključ</label>
+      <input type="password" id="apiKeyGemini" placeholder="AIzaSy...">
+      <div class="napomena">Ključ se čuva samo lokalno u browseru (localStorage) i šalje se isključivo direktno ka Google serverima.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>📘 Osnovni podaci o času</h2>
+    <div class="red2">
+      <div>
+        <label for="predmet">📖 Nastavni predmet</label>
+        <select id="predmet">
+          <option value="Filozofija">Filozofija</option>
+          <option value="Sociologija">Sociologija</option>
+        </select>
+      </div>
+      <div>
+        <label for="razred">🎓 Razred i odjeljenje</label>
+        <select id="razred">
+          <option value="I (Prvi)">I (Prvi)</option>
+          <option value="II (Drugi)">II (Drugi)</option>
+          <option value="III (Treći)">III (Treći)</option>
+          <option value="IV (Četvrti)">IV (Četvrti)</option>
+        </select>
+      </div>
+    </div>
+
+    <label for="tema">🧩 Nastavna tema</label>
+    <input type="text" id="tema" placeholder="npr. Socijalna struktura društva">
+
+    <label for="jedinica">📄 Nastavna jedinica</label>
+    <input type="text" id="jedinica" placeholder="npr. Društvene klase i slojevi">
+
+    <div class="red2">
+      <div>
+        <label for="tipCasa">🏷️ Tip časa</label>
+        <select id="tipCasa">
+          <option>Obrada novog gradiva</option>
+          <option>Ponavljanje i utvrđivanje gradiva</option>
+          <option>Sistematizacija gradiva</option>
+          <option>Ispitivanje i ocjenjivanje učenika</option>
+          <option>Uvodni čas</option>
+          <option>Kombinovani čas sa vježbama</option>
+        </select>
+      </div>
+      <div>
+        <label>Nastava</label>
+        <div class="radio-grupa">
+          <label><input type="radio" name="nastava" value="Redovna" checked> Redovna</label>
+          <label><input type="radio" name="nastava" value="Izborna"> Izborna</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="red2">
+      <div>
+        <label>Trajanje časa</label>
+        <div class="radio-grupa">
+          <label><input type="radio" name="trajanje" value="45 minuta" checked> 45 minuta</label>
+          <label><input type="radio" name="trajanje" value="90 minuta"> 90 minuta</label>
+        </div>
+      </div>
+      <div>
+        <label for="datumRealizacije">📅 Datum realizacije časa</label>
+        <input type="date" id="datumRealizacije">
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>📝 Posebne napomene za pripremu</h2>
+    <div class="radio-grupa" style="flex-direction: column; gap: 8px; align-items: flex-start;">
+      <label><input type="checkbox" id="napDetaljnije" value="Detaljno obradi glavni dio časa - proširi aktivnosti nastavnika i učenika, dodaj više konkretnih primjera i objašnjenja."> Detaljno obradi glavni dio</label>
+      <label><input type="checkbox" id="napPitanja" value="U završnom dijelu časa postavi veći broj pitanja za provjeru ishoda (najmanje 6-8 pitanja)."> Više pitanja u završnom dijelu</label>
+      <label><input type="checkbox" id="napLinkovi" value="U okviru dodatnih/online resursa i priloga navedi konkretne linkove (URL-ove) ka relevantnim sadržajima, video materijalima ili prilozima vezanim za temu, gdje god je to moguće."> Navedi linkove za priloge</label>
+    </div>
+    <label for="napSlobodno">Dodatna napomena (slobodan upis)</label>
+    <input type="text" id="napSlobodno" placeholder="npr. dodaj primjer iz svakodnevnog života, uključi debate metodu...">
+    <div class="napomena">Ako ništa ne označiš niti upišeš, generisaće se standardna priprema prema urneku.</div>
+
+    <details style="margin-top:14px;">
+      <summary style="cursor:pointer; font-size:13px; font-weight:600; color:var(--plava);">Imaš JSON fajl prethodno sačuvane pripreme? Učitaj ga ovdje</summary>
+      <label for="fajlPriprema">JSON fajl prethodno izvezene pripreme (dugme "💾 JSON")</label>
+      <input type="file" id="fajlPriprema" accept=".json" onchange="ucitajPripremuIzFajla(event)">
+      <div class="napomena">Vraća prethodno generisanu pripremu na ekran - korisno ako je izgubljena iz browsera (npr. obrisan keš, drugi uređaj) a imaš sačuvan JSON fajl.</div>
+    </details>
+  </div>
+
+  <div class="dugmad">
+    <button id="generisi" onclick="generisiPripremu()">🌀 Generiši</button>
+    <button id="nastavi" onclick="nastaviGenerisanje()" style="display:none; background:#c77b00; color:#fff;">↻ Nastavi</button>
+    <button id="izvezWord" onclick="izvezUWord()">💾 Word</button>
+    <button id="izvezi" onclick="window.print()">📤 PDF</button>
+    <button id="sacuvajDrive" onclick="sacuvajNaDrive()" style="display:none; background:#e8edf5; color:var(--plava);">☁️ Google Drive</button>
+    <button id="izvezInput" onclick="otvoriInput()" style="display:none; background:#e8edf5; color:var(--plava);">🛠️ Input</button>
+    <button id="izvezNivoi" onclick="otvoriNivoeZnanja()" style="display:none; background:#e8edf5; color:var(--plava);">📖 Lekcija</button>
+    <button id="provjeraCinjenica" onclick="provjeriCinjenice()" style="display:none;">🔍 Provjeri</button>
+    <button id="izvezJson" onclick="izvezJsonRezerva()" style="display:none; background:#eef1f6; color:#556;">💾 JSON</button>
+    <button id="obrisi" onclick="obrisiPripremu()" style="display:none; background:linear-gradient(135deg, #2f6bb5 0%, #1e4d8b 100%); color:#fff;">🆕 Nova priprema</button>
+    <button id="pitajAI" onclick="pitajAI()">🤖 Proširi</button>
+  </div>
+  <div id="status"></div>
+
+  <div id="rezultat-wrap">
+    <br>
+    <div class="upozorenje">
+      <span class="ikona-upoz">⚠️</span>
+      <span>Sadržaj je generisan pomoću AI-a i može sadržavati greške. <strong>Obavezno provjeri prije upotrebe u razredu ili predaje dokumentacije.</strong> Dugme "Provjeri" može pomoći, ali ne zamjenjuje tvoju provjeru.</span>
+    </div>
+    <div class="naslov-pripreme">PRIPREMA ZA NASTAVNI ČAS</div>
+    <div id="rezultat"></div>
+    <div id="provjeraRezultat"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+const el = id => document.getElementById(id);
+
+function azurirajPrikazPlatforme() {
+  const platforma = el('aiPlatforma').value;
+  el('grupaGroq').style.display = platforma === 'groq' ? 'block' : 'none';
+  el('grupaGemini').style.display = platforma === 'gemini' ? 'block' : 'none';
+}
+
+// Učitaj sačuvani API ključ ako postoji
+window.addEventListener('DOMContentLoaded', () => {
+  const savedGroq = localStorage.getItem('groq_api_key');
+  if (savedGroq) el('apiKeyGroq').value = savedGroq;
+  const savedGemini = localStorage.getItem('gemini_api_key');
+  if (savedGemini) el('apiKeyGemini').value = savedGemini;
+  const savedPlatforma = localStorage.getItem('ai_platforma');
+  if (savedPlatforma) el('aiPlatforma').value = savedPlatforma;
+  azurirajPrikazPlatforme();
+  el('aiPlatforma').addEventListener('change', () => {
+    localStorage.setItem('ai_platforma', el('aiPlatforma').value);
+    azurirajPrikazPlatforme();
+  });
+
+  const danas = new Date().toISOString().split('T')[0];
+  el('datumRealizacije').value = danas;
+});
+
+function danasnjiDatum() {
+  const d = new Date();
+  return d.toLocaleDateString('bs-BA');
+}
+
+function sistemskiPrompt(trajanje) {
+  const je90 = (trajanje || '').indexOf('90') !== -1;
+
+  const tokCasa90 = `VII - TOK ČASA
+
+A) UVODNI DIO ČASA (10 minuta)
+Nastavnik: [konkretna aktivnost - najava, motivacija, uvodno pitanje]
+Učenici: [konkretna aktivnost]
+Očekivani rezultat: [konkretno]
+
+B) GLAVNI DIO ČASA (≈60 minuta)
+Naziv aktivnosti: [naziv]
+Cilj: [konkretno]
+Aktivnosti nastavnika: [detaljno]
+Aktivnosti učenika: [detaljno]
+Materijali: [konkretno]
+Formativno vrednovanje: [konkretno]
+
+VAŽNO: Glavni dio časa mora biti JEDNA CJELINA, bez dijeljenja na Fazu 1/Fazu 2 ili više faza. Cijeli glavni dio traje ≈60 minuta kao jedinstvena aktivnost.
+
+Ključna pitanja za učenike: [numerisana lista, 3 pitanja relevantna za sadržaj]
+
+C) ZAVRŠNI DIO ČASA (20 minuta)
+Aktivnost: Sistematizacija (8-9 minuta)
+Nastavnik: [konkretno]
+Učenici: [konkretno]
+
+Aktivnost: Provjera ishoda (8-9 minuta)
+Nastavnik: [konkretno]
+Učenici: [konkretno]
+
+Aktivnost: Povratna informacija (2-3 minute)
+Nastavnik: [konkretno]
+Učenici: [konkretno]
+Očekivani rezultat: [konkretno]`;
+
+  const tokCasa45 = `VII - TOK ČASA
+
+A) UVODNI DIO ČASA (7-8 minuta)
+Nastavnik: [konkretna aktivnost - najava, motivacija, uvodno pitanje]
+Učenici: [konkretna aktivnost]
+Očekivani rezultat: [konkretno]
+
+B) GLAVNI DIO ČASA (≈30 minuta)
+Naziv aktivnosti: [naziv]
+Cilj: [konkretno]
+Aktivnosti nastavnika: [detaljno]
+Aktivnosti učenika: [detaljno]
+Materijali: [konkretno]
+Formativno vrednovanje: [konkretno]
+
+VAŽNO: Glavni dio časa mora biti JEDNA CJELINA, bez dijeljenja na Fazu 1/Fazu 2 ili više faza. Cijeli glavni dio traje ≈30 minuta kao jedinstvena aktivnost.
+
+Ključna pitanja za učenike: [numerisana lista, 3 pitanja relevantna za sadržaj]
+
+C) ZAVRŠNI DIO ČASA (≈8 minuta)
+Aktivnost: Sistematizacija (3-4 minute)
+Nastavnik: [konkretno]
+Učenici: [konkretno]
+
+Aktivnost: Provjera ishoda (3-4 minute)
+Nastavnik: [konkretno]
+Učenici: [konkretno]
+
+Aktivnost: Povratna informacija (1 minuta)
+Nastavnik: [konkretno]
+Učenici: [konkretno]
+Očekivani rezultat: [konkretno]`;
+
+  const tokCasa = je90 ? tokCasa90 : tokCasa45;
+
+  return `Ti si iskusan pedagog-metodičar u bosanskoškolskom sistemu. Tvoj zadatak je da napišeš KOMPLETNU pripremu za nastavni čas, striktno prema sljedećem urneku (template), na bosanskom jeziku. Poštuj tačno ovu strukturu, redoslijed i naslove (rimski brojevi i nazivi sekcija moraju ostati isti). Piši stručno, konkretno i primjenjivo, prilagođeno unesenom predmetu, razredu, temi i jedinici. Ne izostavljaj nijednu sekciju.
+
+VAŽNO - JEZIK (obavezno, bez izuzetka): Cijeli tekst piši isključivo ijekavskim izgovorom (npr. "lijep", "dijete", "mlijeko", "vrijeme", "razumjeti", "cjelina", "rijetko" - NIKAD ekavskim oblicima poput "lep", "dete", "mleko", "vreme", "razumeti", "celina", "retko"). Ovo pravilo važi za svaku riječ i svaku sekciju pripreme.
+
+Vrati odgovor ISKLJUČIVO kao čist HTML fragment (bez <html>, <head>, <body> tagova), koristeći <h2> za rimske naslove sekcija (I - OSNOVNI PODACI, II - LITERATURA, itd.), <h3> za podnaslove (npr. FAZA 1, UVODNI DIO ČASA), <p> za tekst, <strong> za labele poput "Nastavnik:", "Učenici:", i <ul>/<ol> gdje je prirodno (npr. kriteriji uspjeha, ključna pitanja). Bez markdown sintakse, bez tri obrnute kose crte, bez uvodnog teksta prije ili poslije - samo HTML fragment koji počinje sa <h2>I - OSNOVNI PODACI</h2>.
+
+URNEK STRUKTURE:
+
+I - OSNOVNI PODACI
+Naziv i mjesto škole: JU Gimnazija "Meša Selimović" Tuzla
+Ime i prezime nastavnika, zvanje: Nijaz Salimović, prof. filozofije i sociologije
+Nastavni predmet: [popuni]
+Nastava: Redovna/Izborna [popuni prema unosu]
+Razred i odjeljenje: [popuni prema unosu]
+Nastavna tema: [popuni]
+Nastavna jedinica: [popuni]
+Tip časa: [popuni]
+Datum izrade: [danasnji datum]     Datum realizacije: [obavezno upiši tačno onu vrijednost koja je proslijeđena kao "Datum realizacije" u podacima korisnika ispod - NIKAD ne ostavljaj prazno niti piši placeholder]
+Lokacija časa: Učionica 18.     Trajanje: [popuni prema unosu]
+
+II - LITERATURA
+Za učenike: Ako je predmet Sociologija koristi udžbenik: Slavo Kukić, "Sociologija", udžbenik. Ako je predmet Filozofija koristi udžbenik: Ismet Strujo, "Pregled historije filozofije", udžbenik. Za druge predmete predloži odgovarajući standardni udžbenik za taj predmet i razred u BiH školskom sistemu.
+Za nastavnika: [predloži 1-2 stručne reference relevantne za temu]
+
+VAŽNO ZA LITERATURU I AUTORE: Svi predloženi autori udžbenika, stručne literature i dodatnih izvora (uključujući one u sekcijama II i XI) MORAJU biti sa našeg govornog područja (Bosna i Hercegovina, Srbija, Hrvatska, Crna Gora) i pisati na bosanskom/hrvatskom/srpskom jeziku. Ne predlaži strane (npr. engleske, njemačke, američke) autore niti prevedena strana izdanja, osim ako je izričito riječ o domaćem prijevodu koji se standardno koristi u našim školama.
+
+III - KORELACIJA I KOORDINACIJA
+Korelacija sa drugim predmetima: [predloži logične korelacije]
+Prethodna nastavna jedinica: [predloži logičnu prethodnu jedinicu]
+Naredna nastavna jedinica: [predloži logičnu narednu jedinicu]
+
+VAŽNO: Kad god se u korelaciji ili bilo gdje drugo u pripremi spominje maternji/jezički predmet (jezik i književnost), NE koristi nazive kao "Bosanski jezik", "Hrvatski jezik", "Srpski jezik" ili "Maternji jezik" - uvijek koristi isključivo naziv "BHS jezik i književnost".
+
+IV - ISHODI UČENJA
+Na kraju časa učenik/učenica će biti u stanju da:
+Kognitivni ishodi (Razmišljanje i znanje): [konkretno, koristeći glagole: razumije, definiše, razlikuje, analizira, objašnjava, navodi, interpretira, kritikuje]
+Psihomotorički ishodi (Rad i vještine): [konkretno, koristeći glagole: konstruiše, izvodi, prezentuje, crta, primjenjuje, demonstrira]
+Afektivni ishodi (Osjećanja i stavovi): [konkretno, koristeći: prepoznaje vrijednost, uvažava, razvija stav, pokazuje odgovornost, pomaže, prihvata, podržava, cijeni]
+
+V - KRITERIJI USPJEHA
+Učenik je ostvario ishode ako može: [numerisana lista, 3-5 konkretnih, mjerljivih kriterija]
+
+VI - ORGANIZACIONA OSNOVA
+Oblici rada: [npr. frontalni, grupni, individualni, rad u parovima - prilagođeno]
+Nastavne metode: [konkretne metode prilagođene temi]
+Nastavna sredstva: [konkretno]
+Nastavna pomagala: [konkretno]
+Digitalni alati/resursi: internet, AI alati, online platforme, web sites - [dopuni konkretnim prijedlozima relevantnim za temu]
+
+${tokCasa}
+
+VIII - IZGLED (PLAN) TABLE
+Nastavna jedinica: [naziv jedinice]
+Lijeva strana table: [konkretno]
+Srednji dio table: [konkretno]
+Desna strana table: [konkretno]
+Donji dio table - po potrebi: domaća zadaća: [konkretno]
+
+IX - VREDNOVANJE (po potrebi)
+Formativno vrednovanje (tokom časa):
+Metode i tehnike: (npr. online alati: Wordwall, Quizlet, Kahoot, jedno pitanje, najbrži prst, asocijacije, pogodi pojam) [prilagodi temi]
+Povratna informacija: [konkretno]
+Sumativno vrednovanje (nakon časa/teme):
+Metode: [konkretno]
+Kriteriji ocjenjivanja: [konkretno]
+
+X - DOMAĆA ZADAĆA (po potrebi)
+Zadatak: [konkretno]
+Uputstvo: [konkretno]
+Rok i način predaje: [konkretno]
+Vrednovanje: [konkretno]
+
+XI - INSTRUKCIJE ZA PROŠIRENJE ZNANJA (po potrebi)
+Dodatna literatura: [konkretno, autori sa našeg govornog područja]
+Online resursi: [konkretno] Uvijek uključi i sljedeći link kao dodatni resurs: https://sites.google.com/view/e-prilog/naslovna
+Praktične aktivnosti: [konkretno]
+Napomene za naredni čas: [konkretno]`;
+}
+
+const UPUTSTVA_PO_TIPU_CASA = {
+  'Obrada novog gradiva': 'UVODNI DIO: kratko ponavljanje prethodnog znanja kao osnova za novu temu, motivacija učenika za novu temu. GLAVNI DIO: postepeno uvođenje novih pojmova i sadržaja, jasno objašnjenje, konkretni primjeri, provjera razumijevanja tokom izlaganja (ne na kraju). ZAVRŠNI DIO: sistematizacija novousvojenog gradiva, kratka provjera da li je usvojeno. DOMAĆA ZADAĆA: vezana za utvrđivanje upravo obrađenog novog gradiva.',
+
+  'Ponavljanje i utvrđivanje gradiva': 'UVODNI DIO: podsjećanje na ključne pojmove prethodno obrađene teme/teme koje se ponavljaju. GLAVNI DIO: zadaci, vježbe i pitanja koja učvršćuju već obrađeno znanje - BEZ uvođenja bilo kakvih novih pojmova - rad na primjerima, rješavanje problemskih zadataka, diskusija, utvrđivanje. ZAVRŠNI DIO: provjera koliko je gradivo usvojeno kroz kraću provjeru znanja ili kviz.',
+
+  'Sistematizacija gradiva': 'UVODNI DIO: najava da se radi sveobuhvatan pregled cijele tematske cjeline ili više povezanih nastavnih jedinica. GLAVNI DIO: povezivanje i uporedni pregled više prethodno obrađenih jedinica, korištenje tabela, šema ili mapa uma, isticanje veza i odnosa između pojmova iz cijele cjeline - BEZ obrade novog gradiva. ZAVRŠNI DIO: cjelovit rezime cijele tematske cjeline, priprema učenika za predstojeću provjeru znanja.',
+
+  'Ispitivanje i ocjenjivanje učenika': 'UVODNI DIO: kratko objašnjenje načina provjere (usmeno/pismeno/test) i kriterijuma - BEZ obrade ili ponavljanja gradiva. GLAVNI DIO: isključivo konkretni zadaci za provjeru znanja (pitanja, testovi, usmeno ispitivanje) sa jasno definisanim kriterijumima ocjenjivanja - NEMA predavanja niti novih objašnjenja gradiva tokom časa. ZAVRŠNI DIO: davanje povratne informacije učenicima, najava načina i roka objavljivanja ocjena. DODATNO: sekcija IX - VREDNOVANJE mora biti znatno detaljnija nego kod ostalih tipova časa, sa jasnim, mjerljivim kriterijumima ocjenjivanja po elementima/zadacima.',
+
+  'Uvodni čas': 'UVODNI DIO: upoznavanje sa novom temom/predmetom (i nastavnikom ako je prvi čas u školskoj godini), objašnjenje plana rada za naredni period, motivacija učenika. GLAVNI DIO: opšti pregled onoga što će se raditi u narednom periodu, osnovni pojmovi bez dubinske obrade, dogovor o načinu rada, obavezama i načinu ocjenjivanja tokom školske godine/polugodišta. ZAVRŠNI DIO: prostor za pitanja učenika, najava naredne konkretne teme.',
+
+  'Kombinovani čas sa vježbama': 'UVODNI DIO: kratko podsjećanje na relevantnu teoriju/prethodno znanje. GLAVNI DIO: naizmjenična kombinacija kraćeg teorijskog dijela i praktičnih vježbi/zadataka primjene odmah nakon svakog teorijskog segmenta (teorija-praksa-teorija-praksa, a ne odvojeno sve teorija pa sve vježbe). ZAVRŠNI DIO: pregled urađenih vježbi, zajednička ispravka grešaka.'
+};
+
+function korisnickiPrompt() {
+  const predmet = el('predmet').value.trim() || '(nije uneseno)';
+  const razred = el('razred').value.trim() || '(nije uneseno)';
+  const tema = el('tema').value.trim() || '(nije uneseno)';
+  const jedinica = el('jedinica').value.trim() || '(nije uneseno)';
+  const tipCasa = el('tipCasa').value;
+  const nastava = document.querySelector('input[name=nastava]:checked').value;
+  const trajanje = document.querySelector('input[name=trajanje]:checked').value;
+  const datumRealizacije = el('datumRealizacije').value || danasnjiDatum();
+
+  const uputstvoTip = UPUTSTVA_PO_TIPU_CASA[tipCasa]
+    ? `\n\nOBAVEZNO UPUTSTVO ZA TOK ČASA (sekcija VII) PREMA IZABRANOM TIPU ČASA "${tipCasa}":\n${UPUTSTVA_PO_TIPU_CASA[tipCasa]}`
+    : '';
+
+  const posebneNapomene = [];
+  if (el('napDetaljnije').checked) posebneNapomene.push(el('napDetaljnije').value);
+  if (el('napPitanja').checked) posebneNapomene.push(el('napPitanja').value);
+  if (el('napLinkovi').checked) posebneNapomene.push(el('napLinkovi').value);
+  const slobodno = el('napSlobodno').value.trim();
+  if (slobodno) posebneNapomene.push(slobodno);
+
+  const napomeneTekst = posebneNapomene.length
+    ? `\n\nPOSEBNE NAPOMENE ZA OVU PRIPREMU (obavezno primijeni, imaju prednost ako su u suprotnosti sa opštim uputstvom za tip časa):\n- ${posebneNapomene.join('\n- ')}`
+    : '';
+
+  return `Napravi pripremu za čas sa sljedećim podacima:
+Nastavni predmet: ${predmet}
+Razred i odjeljenje: ${razred}
+Nastavna tema: ${tema}
+Nastavna jedinica: ${jedinica}
+Tip časa: ${tipCasa}
+Nastava: ${nastava}
+Trajanje: ${trajanje}
+Datum izrade: ${danasnjiDatum()}
+Datum realizacije: ${datumRealizacije}${uputstvoTip}${napomeneTekst}`;
+}
+
+let razgovor = [];
+
+async function generisiPripremu() {
+  const apiKey = trenutniKljuc();
+  const status = el('status');
+  const btn = el('generisi');
+
+  if (!apiKey) {
+    status.className = 'err';
+    status.textContent = trenutnaPlatforma() === 'gemini' ? 'Unesi Gemini API ključ.' : 'Unesi Groq API ključ.';
+    return;
+  }
+  if (!el('predmet').value.trim() || !el('jedinica').value.trim()) {
+    status.className = 'err';
+    status.textContent = 'Unesi barem nastavni predmet i nastavnu jedinicu.';
+    return;
+  }
+
+  sacuvajKljuc();
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Generišem...';
+  status.className = '';
+  status.textContent = '';
+  el('izvezWord').style.display = 'none';
+  el('izvezi').style.display = 'none';
+  el('sacuvajDrive').style.display = 'none';
+  el('nastavi').style.display = 'none';
+  el('rezultat-wrap').style.display = 'none';
+  el('provjeraCinjenica').style.display = 'none';
+  el('provjeraRezultat').style.display = 'none';
+
+  const trajanjeOdabrano = document.querySelector('input[name=trajanje]:checked').value;
+
+  razgovor = [
+    { role: 'system', content: sistemskiPrompt(trajanjeOdabrano) },
+    { role: 'user', content: korisnickiPrompt() }
+  ];
+
+  try {
+    const { sadrzaj, isecen } = await pozoviAI(apiKey);
+    el('rezultat').innerHTML = ispraviOsnovnePodatke(sadrzaj);
+    el('rezultat-wrap').style.display = 'block';
+    el('izvezWord').style.display = 'inline-block';
+    el('izvezi').style.display = 'inline-block';
+    el('sacuvajDrive').style.display = 'inline-block';
+    el('izvezInput').style.display = 'inline-block';
+    el('izvezNivoi').style.display = 'inline-block';
+    el('izvezJson').style.display = 'inline-block';
+    el('provjeraCinjenica').style.display = 'inline-block';
+    el('provjeraRezultat').style.display = 'none';
+    el('provjeraRezultat').innerHTML = '';
+
+    if (isecen) {
+      el('nastavi').style.display = 'inline-block';
+      status.className = 'err';
+      status.textContent = 'Odgovor je isečen (predugačak). Klikni "Nastavi" da dovršim pripremu.';
+    } else {
+      status.className = 'ok';
+      status.textContent = 'Priprema je uspješno generisana.';
+    }
+    el('obrisi').style.display = 'inline-block';
+    el('rezultat-wrap').scrollIntoView({ behavior: 'smooth' });
+
+  } catch (err) {
+    status.className = 'err';
+    status.textContent = 'Greška: ' + err.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🌀 Generiši';
+  }
+}
+
+function trenutnaPlatforma() {
+  return el('aiPlatforma').value;
+}
+
+function trenutniKljuc() {
+  return trenutnaPlatforma() === 'gemini' ? el('apiKeyGemini').value.trim() : el('apiKeyGroq').value.trim();
+}
+
+function sacuvajKljuc() {
+  if (trenutnaPlatforma() === 'gemini') {
+    localStorage.setItem('gemini_api_key', el('apiKeyGemini').value.trim());
+  } else {
+    localStorage.setItem('groq_api_key', el('apiKeyGroq').value.trim());
+  }
+}
+
+async function pozoviAI(apiKey) {
+  return trenutnaPlatforma() === 'gemini' ? await pozoviGemini(apiKey) : await pozoviGroq(apiKey);
+}
+
+function cekaj(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Automatski ponavlja poziv kod privremenih grešaka: 429 (rate limit) i 503 (server preopterećen)
+async function fetchUzPonovniPokusaj(url, fetchOpts, onRetryStatus, pokusaj) {
+  pokusaj = pokusaj || 1;
+  const response = await fetch(url, fetchOpts);
+
+  if ((response.status === 429 || response.status === 503) && pokusaj <= 4) {
+    let cekanjeSek = 5 * pokusaj;
+    if (response.status === 429) {
+      const errText = await response.text();
+      const podudaranje = errText.match(/try again in ([\d.]+)s/i);
+      if (podudaranje) cekanjeSek = parseFloat(podudaranje[1]) + 1;
+    }
+    if (onRetryStatus) onRetryStatus(response.status, cekanjeSek, pokusaj);
+    await cekaj(cekanjeSek * 1000);
+    return fetchUzPonovniPokusaj(url, fetchOpts, onRetryStatus, pokusaj + 1);
+  }
+
+  return response;
+}
+
+function pretvoriURazgovorZaGemini(poruke) {
+  let systemText = '';
+  const contents = [];
+  poruke.forEach(m => {
+    if (m.role === 'system') {
+      systemText += (systemText ? '\n\n' : '') + m.content;
+    } else if (m.role === 'user') {
+      contents.push({ role: 'user', parts: [{ text: m.content }] });
+    } else if (m.role === 'assistant') {
+      contents.push({ role: 'model', parts: [{ text: m.content }] });
+    }
+  });
+  return { systemText, contents };
+}
+
+async function pozoviGemini(apiKey) {
+  const { systemText, contents } = pretvoriURazgovorZaGemini(razgovor);
+  const model = 'gemini-3.1-flash-lite';
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + encodeURIComponent(apiKey);
+
+  const body = {
+    contents,
+    generationConfig: { temperature: 0.6, maxOutputTokens: 5000 }
+  };
+  if (systemText) body.systemInstruction = { parts: [{ text: systemText }] };
+
+  const response = await fetchUzPonovniPokusaj(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  }, (status, cekanjeSek, pokusaj) => {
+    const status_el = el('status');
+    status_el.className = '';
+    status_el.textContent = (status === 503 ? 'Gemini server je trenutno preopterećen' : 'Gemini je dostigao limit zahtjeva (rate limit)') + ', čekam ' + Math.ceil(cekanjeSek) + 's pa pokušavam ponovo (' + pokusaj + '/4)...';
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error('Gemini API greška (' + response.status + '): ' + errText.slice(0, 300));
+  }
+
+  const data = await response.json();
+  const kandidat = data.candidates && data.candidates[0] ? data.candidates[0] : null;
+  let sadrzaj = (kandidat && kandidat.content && kandidat.content.parts)
+    ? kandidat.content.parts.map(p => p.text || '').join('')
+    : '';
+  const finishReason = kandidat ? kandidat.finishReason : '';
+
+  sadrzaj = sadrzaj.trim();
+  sadrzaj = sadrzaj.replace(/^```html/i, '').replace(/^```/, '').replace(/```$/, '').trim();
+
+  if (!sadrzaj) throw new Error('Prazan odgovor od Gemini modela.');
+
+  // sačuvaj u istoriju razgovora radi eventualnog nastavka
+  razgovor.push({ role: 'assistant', content: sadrzaj });
+
+  return { sadrzaj: el('rezultat').innerHTML ? el('rezultat').innerHTML + sadrzaj : sadrzaj, isecen: finishReason === 'MAX_TOKENS' };
+}
+
+async function pozoviAIJednokratno(apiKey, tekstUpita, opts) {
+  opts = opts || {};
+  const temperature = opts.temperature !== undefined ? opts.temperature : 0.3;
+  const maxTokens = opts.maxTokens || 1200;
+
+  if (trenutnaPlatforma() === 'gemini') {
+    const model = 'gemini-3.1-flash-lite';
+    const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + encodeURIComponent(apiKey);
+    const response = await fetchUzPonovniPokusaj(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: tekstUpita }] }],
+        generationConfig: { temperature, maxOutputTokens: maxTokens }
+      })
+    });
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error('Gemini API greška (' + response.status + '): ' + errText.slice(0, 300));
+    }
+    const data = await response.json();
+    const kandidat = data.candidates && data.candidates[0] ? data.candidates[0] : null;
+    let sadrzaj = (kandidat && kandidat.content && kandidat.content.parts)
+      ? kandidat.content.parts.map(p => p.text || '').join('')
+      : '';
+    sadrzaj = sadrzaj.trim().replace(/^```html/i, '').replace(/^```/, '').replace(/```$/, '').trim();
+    return sadrzaj;
+  }
+
+  const response = await fetchUzPonovniPokusaj('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + apiKey
+    },
+    body: JSON.stringify({
+      model: 'openai/gpt-oss-120b',
+      temperature,
+      max_tokens: maxTokens,
+      reasoning_effort: opts.reasoningEffort || 'low',
+      messages: [{ role: 'user', content: tekstUpita }]
+    })
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error('Groq API greška (' + response.status + '): ' + errText.slice(0, 300));
+  }
+
+  const data = await response.json();
+  const poruka = data.choices && data.choices[0] ? data.choices[0].message : null;
+  let sadrzaj = (poruka && poruka.content) ? poruka.content.trim() : '';
+  sadrzaj = sadrzaj.replace(/^```html/i, '').replace(/^```/, '').replace(/```$/, '').trim();
+  return sadrzaj;
+}
+
+async function pozoviGroq(apiKey) {
+  const response = await fetchUzPonovniPokusaj('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + apiKey
+    },
+    body: JSON.stringify({
+      model: 'openai/gpt-oss-120b',
+      temperature: 0.6,
+      max_tokens: 5000,
+      messages: razgovor
+    })
+  }, (status, cekanjeSek, pokusaj) => {
+    const status_el = el('status');
+    status_el.className = '';
+    status_el.textContent = (status === 503 ? 'Groq server je trenutno preopterećen' : 'Groq je dostigao limit zahtjeva (rate limit)') + ', čekam ' + Math.ceil(cekanjeSek) + 's pa pokušavam ponovo (' + pokusaj + '/4)...';
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error('Groq API greška (' + response.status + '): ' + errText.slice(0, 300));
+  }
+
+  const data = await response.json();
+  const poruka = data.choices && data.choices[0] ? data.choices[0].message : null;
+  let sadrzaj = poruka ? poruka.content : '';
+  const finishReason = data.choices && data.choices[0] ? data.choices[0].finish_reason : '';
+
+  sadrzaj = sadrzaj.trim();
+  sadrzaj = sadrzaj.replace(/^```html/i, '').replace(/^```/,'').replace(/```$/,'').trim();
+
+  if (!sadrzaj) throw new Error('Prazan odgovor od modela.');
+
+  // sačuvaj u istoriju razgovora radi eventualnog nastavka
+  razgovor.push({ role: 'assistant', content: poruka.content });
+
+  return { sadrzaj: el('rezultat').innerHTML ? el('rezultat').innerHTML + sadrzaj : sadrzaj, isecen: finishReason === 'length' };
+}
+
+function regexEscape(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+async function provjeriCinjenice() {
+  const apiKey = trenutniKljuc();
+  const status = el('status');
+  const btn = el('provjeraCinjenica');
+  const originalHtml = btn.innerHTML;
+  const box = el('provjeraRezultat');
+
+  if (!apiKey) {
+    status.className = 'err';
+    status.textContent = trenutnaPlatforma() === 'gemini' ? 'Unesi Gemini API ključ.' : 'Unesi Groq API ključ.';
+    return;
+  }
+
+  const tekstPripreme = el('rezultat').innerText;
+  if (!tekstPripreme.trim()) return;
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Provjeravam...';
+  box.style.display = 'none';
+
+  const uputa = `Ti si pažljiv urednik-recenzent. Ispod je tekst pripreme za nastavni čas koju je generisao AI model. Tvoj zadatak NIJE da pišeš novu pripremu, nego da kritički pregledaš SAMO sljedeće elemente i ukažeš na moguće greške ili nesigurnosti:
+1. Datumi (da li su logični i dosljedni)
+2. Imena autora udžbenika/literature i nazivi djela (da li zvuče vjerodostojno za bh./regionalni obrazovni kontekst, ili djeluju izmišljeno/nesigurno)
+3. Činjenične tvrdnje o temi (postoji li nešto što zvuči netačno, zastarjelo ili sumnjivo)
+4. Linkovi/URL-ovi ako postoje (da li izgledaju validno ili izmišljeno)
+
+Odgovori ISKLJUČIVO kao kratka HTML lista (<ul><li>...</li></ul>), bez uvoda i zaključka. Svaka stavka neka bude kratka (1 rečenica), konkretna, i neka jasno kaže NA ŠTA nastavnik treba obratiti pažnju/provjeriti. Ako ne uočiš ništa sumnjivo u nekoj od 4 kategorije, tu kategoriju jednostavno preskoči - ne piši "sve je u redu". Ako baš ništa nije sumnjivo, vrati samo: <ul><li>Nisu uočene očigledne nesigurnosti, ali preporučuje se standardna provjera prije upotrebe.</li></ul>
+
+TEKST PRIPREME:
+"""${tekstPripreme.slice(0, 6000)}"""`;
+
+  try {
+    const sadrzaj = await pozoviAIJednokratno(apiKey, uputa, { temperature: 0.3, maxTokens: 1200, reasoningEffort: 'low' });
+
+    if (!sadrzaj) throw new Error('Prazan odgovor od modela pri provjeri činjenica.');
+
+    box.innerHTML = '<h3>🔍 Napomene za provjeru (generisano AI-em)</h3>' + sadrzaj +
+      '<div class="napomena" style="margin-top:10px;">Ovo je AI samoprovjera i ne garantuje potpunu tačnost - i dalje sve provjeri prije upotrebe u razredu.</div>';
+    box.style.display = 'block';
+    box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } catch (err) {
+    status.className = 'err';
+    status.textContent = 'Greška pri provjeri činjenica: ' + err.message;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  }
+}
+
+// Poslije generisanja, osnovne podatke (predmet, nastava, razred, tema, jedinica, tip časa)
+// zamjenjujemo TAČNO unesenim vrijednostima, jer AI model ponekad skrati tekst
+// (npr. napiše samo "IV" umjesto "IV (Četvrti)") - ovo to čini pouzdanim, bez obzira na model.
+function ispraviOsnovnePodatke(html) {
+  const parovi = [
+    ['Nastavni predmet', el('predmet').value.trim()],
+    ['Nastava', (document.querySelector('input[name="nastava"]:checked') || {}).value || ''],
+    ['Razred i odjeljenje', el('razred').value.trim()],
+    ['Nastavna tema', el('tema').value.trim()],
+    ['Nastavna jedinica', el('jedinica').value.trim()],
+    ['Tip časa', el('tipCasa').value.trim()]
+  ];
+
+  parovi.forEach(([labela, vrijednost]) => {
+    if (!vrijednost) return;
+    const regex = new RegExp('(<strong>\\s*' + regexEscape(labela) + '\\s*:?\\s*</strong>\\s*)([^<\\n]*)', 'i');
+    if (regex.test(html)) {
+      html = html.replace(regex, '$1' + vrijednost.replace(/\$/g, '$$$$'));
+    }
+  });
+
+  return html;
+}
+
+async function nastaviGenerisanje() {
+  const apiKey = trenutniKljuc();
+  const status = el('status');
+  const btn = el('nastavi');
+
+  razgovor.push({ role: 'user', content: 'Nastavi tačno tamo gdje si stao, bez ponavljanja već napisanog teksta. Ne počinji iznova od naslova - samo se nadoveži na prekinutu rečenicu/sekciju.' });
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Nastavljam...';
+  status.className = '';
+  status.textContent = '';
+
+  try {
+    const { sadrzaj, isecen } = await pozoviAI(apiKey);
+    el('rezultat').innerHTML = ispraviOsnovnePodatke(sadrzaj);
+
+    if (isecen) {
+      status.className = 'err';
+      status.textContent = 'Još uvijek isečeno - klikni "Nastavi" ponovo.';
+    } else {
+      btn.style.display = 'none';
+      status.className = 'ok';
+      status.textContent = 'Priprema je sada kompletna.';
+    }
+  } catch (err) {
+    status.className = 'err';
+    status.textContent = 'Greška: ' + err.message;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '↻ Nastavi';
+  }
+}
+
+// ---------- Izvoz u pravi .docx (Word) fajl ----------
+
+function xmlEscape(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+// Rekurzivno skuplja "runove" teksta (sa bold/italic oznakama) iz jednog čvora
+function sakupiRunove(node, bold, italic, runovi) {
+  node.childNodes.forEach(child => {
+    if (child.nodeType === Node.TEXT_NODE) {
+      const txt = child.textContent;
+      if (txt) runovi.push({ text: txt, bold, italic });
+    } else if (child.nodeType === Node.ELEMENT_NODE) {
+      const tag = child.tagName.toLowerCase();
+      const novoBold = bold || tag === 'strong' || tag === 'b';
+      const novoItalic = italic || tag === 'em' || tag === 'i';
+      if (tag === 'br') {
+        runovi.push({ text: '\n', bold, italic, brk: true });
+      } else {
+        sakupiRunove(child, novoBold, novoItalic, runovi);
+      }
+    }
+  });
+}
+
+function runoviUXml(runovi) {
+  return runovi.map(r => {
+    if (r.brk) return '<w:r><w:br/></w:r>';
+    const rPr = (r.bold || r.italic)
+      ? '<w:rPr>' + (r.bold ? '<w:b/>' : '') + (r.italic ? '<w:i/>' : '') + '</w:rPr>'
+      : '';
+    return '<w:r>' + rPr + '<w:t xml:space="preserve">' + xmlEscape(r.text) + '</w:t></w:r>';
+  }).join('');
+}
+
+function paragrafXml(node, pStyle, numPr) {
+  const runovi = [];
+  sakupiRunove(node, false, false, runovi);
+  const pPrDijelovi = [];
+  if (pStyle) pPrDijelovi.push('<w:pStyle w:val="' + pStyle + '"/>');
+  if (numPr) pPrDijelovi.push(numPr);
+  const pPr = pPrDijelovi.length ? '<w:pPr>' + pPrDijelovi.join('') + '</w:pPr>' : '';
+  return '<w:p>' + pPr + runoviUXml(runovi) + '</w:p>';
+}
+
+// Pretvara HTML sadržaj #rezultat-a u niz Word paragrafa (XML)
+function htmlUDocxTijelo(container) {
+  let xml = '';
+
+  // Naslov na vrhu dokumenta, isto kao u PDF izvozu
+  xml += '<w:p><w:pPr><w:pStyle w:val="NaslovPripreme"/></w:pPr><w:r><w:t>PRIPREMA ZA NASTAVNI ČAS</w:t></w:r></w:p>';
+
+  container.childNodes.forEach(node => {
+    if (node.nodeType !== Node.ELEMENT_NODE) return;
+    const tag = node.tagName.toLowerCase();
+
+    if (tag === 'h2') {
+      xml += paragrafXml(node, 'Heading1');
+    } else if (tag === 'h3') {
+      xml += paragrafXml(node, 'Heading2');
+    } else if (tag === 'p') {
+      xml += paragrafXml(node, 'Normal');
+    } else if (tag === 'ul' || tag === 'ol') {
+      const numId = tag === 'ul' ? '1' : '2';
+      Array.from(node.children).forEach(li => {
+        if (li.tagName.toLowerCase() !== 'li') return;
+        const numPr = '<w:numPr><w:ilvl w:val="0"/><w:numId w:val="' + numId + '"/></w:numPr>';
+        xml += paragrafXml(li, 'ListParagraph', numPr);
+      });
+    } else {
+      // Fallback za bilo koji drugi element (npr. div) - tretiraj kao običan pasus
+      xml += paragrafXml(node, 'Normal');
+    }
+  });
+
+  return xml;
+}
+
+const DOCX_CONTENT_TYPES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+'<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+'<Default Extension="xml" ContentType="application/xml"/>' +
+'<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
+'<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>' +
+'<Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>' +
+'</Types>';
+
+const DOCX_RELS = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+'<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>' +
+'</Relationships>';
+
+const DOCX_DOCUMENT_RELS = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+'<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>' +
+'<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>' +
+'</Relationships>';
+
+const DOCX_STYLES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+'<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+'<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:sz w:val="22"/></w:rPr></w:rPrDefault></w:docDefaults>' +
+'<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:pPr><w:spacing w:after="140" w:line="276" w:lineRule="auto"/></w:pPr></w:style>' +
+'<w:style w:type="paragraph" w:styleId="NaslovPripreme"><w:name w:val="Naslov pripreme"/><w:basedOn w:val="Normal"/>' +
+'<w:pPr><w:jc w:val="center"/><w:spacing w:after="360"/></w:pPr>' +
+'<w:rPr><w:b/><w:sz w:val="32"/><w:color w:val="1E4D8B"/></w:rPr></w:style>' +
+'<w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/>' +
+'<w:pPr><w:spacing w:before="280" w:after="140"/><w:border><w:bottom w:val="single" w:sz="6" w:space="4" w:color="1E4D8B"/></w:border></w:pPr>' +
+'<w:rPr><w:b/><w:sz w:val="26"/><w:color w:val="1E4D8B"/></w:rPr></w:style>' +
+'<w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/>' +
+'<w:pPr><w:spacing w:before="200" w:after="100"/></w:pPr>' +
+'<w:rPr><w:b/><w:sz w:val="23"/><w:color w:val="333333"/></w:rPr></w:style>' +
+'<w:style w:type="paragraph" w:styleId="ListParagraph"><w:name w:val="List Paragraph"/><w:basedOn w:val="Normal"/>' +
+'<w:pPr><w:ind w:left="360"/><w:spacing w:after="80"/></w:pPr></w:style>' +
+'</w:styles>';
+
+const DOCX_NUMBERING = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+'<w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+'<w:abstractNum w:abstractNumId="0"><w:lvl w:ilvl="0"><w:start w:val="1"/><w:numFmt w:val="bullet"/><w:lvlText w:val="•"/><w:lvlJc w:val="left"/>' +
+'<w:pPr><w:ind w:left="720" w:hanging="360"/></w:pPr><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:hint="default"/></w:rPr></w:lvl></w:abstractNum>' +
+'<w:abstractNum w:abstractNumId="1"><w:lvl w:ilvl="0"><w:start w:val="1"/><w:numFmt w:val="decimal"/><w:lvlText w:val="%1."/><w:lvlJc w:val="left"/>' +
+'<w:pPr><w:ind w:left="720" w:hanging="360"/></w:pPr></w:lvl></w:abstractNum>' +
+'<w:num w:numId="1"><w:abstractNumId w:val="0"/></w:num>' +
+'<w:num w:numId="2"><w:abstractNumId w:val="1"/></w:num>' +
+'</w:numbering>';
+
+function nazivFajla() {
+  const predmet = (el('predmet') && el('predmet').value || '').trim();
+  const jedinica = (el('jedinica') && el('jedinica').value || '').trim();
+  let osnova = [predmet, jedinica].filter(Boolean).join('_') || 'priprema';
+  osnova = osnova
+    .replace(/[\\/:*?"<>|]/g, '')
+    .replace(/\s+/g, '_')
+    .slice(0, 80);
+  return 'Priprema_' + osnova + '.docx';
+}
+
+async function generisiDocxBlob() {
+  if (typeof JSZip === 'undefined') {
+    throw new Error('Biblioteka za izvoz u Word nije učitana (provjeri internet konekciju).');
+  }
+
+  const tijeloXml = htmlUDocxTijelo(el('rezultat'));
+
+  const documentXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+    '<w:body>' + tijeloXml +
+    '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/>' +
+    '<w:pgMar w:top="1417" w:right="1417" w:bottom="1417" w:left="1417" w:header="708" w:footer="708" w:gutter="0"/>' +
+    '</w:sectPr></w:body></w:document>';
+
+  const zip = new JSZip();
+  zip.file('[Content_Types].xml', DOCX_CONTENT_TYPES);
+  zip.folder('_rels').file('.rels', DOCX_RELS);
+  zip.folder('word').file('document.xml', documentXml);
+  zip.folder('word').file('styles.xml', DOCX_STYLES);
+  zip.folder('word').file('numbering.xml', DOCX_NUMBERING);
+  zip.folder('word/_rels').file('document.xml.rels', DOCX_DOCUMENT_RELS);
+
+  return await zip.generateAsync({
+    type: 'blob',
+    mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  });
+}
+
+async function izvezUWord() {
+  const status = el('status');
+  const btn = el('izvezWord');
+  const originalHtml = btn.innerHTML;
+
+  if (typeof JSZip === 'undefined') {
+    status.className = 'err';
+    status.textContent = 'Greška: biblioteka za izvoz u Word nije učitana (provjeri internet konekciju).';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Pripremam Word fajl...';
+  status.className = '';
+  status.textContent = '';
+
+  try {
+    const blob = await generisiDocxBlob();
+
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = nazivFajla();
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+
+    status.className = 'ok';
+    status.textContent = 'Word dokument (.docx) je preuzet.';
+  } catch (err) {
+    status.className = 'err';
+    status.textContent = 'Greška pri izvozu u Word: ' + err.message;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  }
+}
+
+// ---------- Google Drive integracija ----------
+const GOOGLE_CLIENT_ID = '935442803882-n4s5i7n3nf0mnpj3i033sjsrrb3ia088.apps.googleusercontent.com';
+const GOOGLE_DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+let googleAccessToken = null;
+let googleTokenClient = null;
+
+function dobijGoogleTokenClient() {
+  if (!googleTokenClient) {
+    if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+      throw new Error('Google prijava se nije učitala (provjeri internet konekciju i pokušaj ponovo).');
+    }
+    googleTokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: GOOGLE_DRIVE_SCOPE,
+      callback: () => {} // postavlja se dinamički prilikom svakog poziva
+    });
+  }
+  return googleTokenClient;
+}
+
+function zatraziGoogleToken() {
+  return new Promise((resolve, reject) => {
+    try {
+      const client = dobijGoogleTokenClient();
+      client.callback = (resp) => {
+        if (resp && resp.access_token) {
+          googleAccessToken = resp.access_token;
+          resolve(resp.access_token);
+        } else {
+          reject(new Error('Prijava na Google nalog nije uspjela.'));
+        }
+      };
+      client.error_callback = (err) => {
+        reject(new Error('Prijava na Google nalog je otkazana ili neuspješna.'));
+      };
+      client.requestAccessToken({ prompt: googleAccessToken ? '' : 'consent' });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+const GOOGLE_DRIVE_FOLDER_NAME = 'Nastavni alati - AI pripreme';
+
+async function dobijIliKreirajFolder(accessToken) {
+  const sacuvaniId = localStorage.getItem('gdrive_folder_id');
+
+  if (sacuvaniId) {
+    const provjera = await fetch('https://www.googleapis.com/drive/v3/files/' + sacuvaniId + '?fields=id,trashed', {
+      headers: { 'Authorization': 'Bearer ' + accessToken }
+    });
+    if (provjera.ok) {
+      const podaci = await provjera.json();
+      if (!podaci.trashed) return sacuvaniId;
+    }
+    // Fascikla je obrisana/nedostupna - nastavi na pretragu/kreiranje ispod
+    localStorage.removeItem('gdrive_folder_id');
+  }
+
+  // Nema zapisa u ovom browseru (npr. drugi uređaj) - pretraži Google Drive
+  // po nazivu, da se ne pravi duplikat fascikle koja već postoji na nalogu.
+  const upit = encodeURIComponent(
+    "name='" + GOOGLE_DRIVE_FOLDER_NAME + "' and mimeType='application/vnd.google-apps.folder' and trashed=false"
+  );
+  const pretraga = await fetch(
+    'https://www.googleapis.com/drive/v3/files?q=' + upit + '&fields=files(id,name,createdTime)&orderBy=createdTime&pageSize=10',
+    { headers: { 'Authorization': 'Bearer ' + accessToken } }
+  );
+
+  if (pretraga.ok) {
+    const rezultatPretrage = await pretraga.json();
+    if (rezultatPretrage.files && rezultatPretrage.files.length > 0) {
+      const postojeciId = rezultatPretrage.files[0].id;
+      localStorage.setItem('gdrive_folder_id', postojeciId);
+      return postojeciId;
+    }
+  }
+
+  const response = await fetch('https://www.googleapis.com/drive/v3/files?fields=id', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + accessToken,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: GOOGLE_DRIVE_FOLDER_NAME,
+      mimeType: 'application/vnd.google-apps.folder'
+    })
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error('Greška pri kreiranju fascikle na Google Drive (' + response.status + '): ' + errText.slice(0, 300));
+  }
+
+  const podaci = await response.json();
+  localStorage.setItem('gdrive_folder_id', podaci.id);
+  return podaci.id;
+}
+
+async function otpremiNaDrive(accessToken, blob, naziv, folderId) {
+  const metapodaci = {
+    name: naziv.replace(/\.docx$/i, ''),
+    mimeType: 'application/vnd.google-apps.document'
+  };
+  if (folderId) metapodaci.parents = [folderId];
+
+  const forma = new FormData();
+  forma.append('metadata', new Blob([JSON.stringify(metapodaci)], { type: 'application/json' }));
+  forma.append('file', blob);
+
+  const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + accessToken },
+    body: forma
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      // token istekao/nevažeći - resetuj pa neka korisnik pokuša ponovo (tražiće se nova prijava)
+      googleAccessToken = null;
+    }
+    const errText = await response.text();
+    throw new Error('Google Drive greška (' + response.status + '): ' + errText.slice(0, 300));
+  }
+
+  return await response.json();
+}
+
+// ---------- Evidencija u Google Sheets ----------
+const GOOGLE_SHEET_NAZIV = 'Evidencija - AI pripreme nastave';
+const EVIDENCIJA_ZAGLAVLJE = ['Datum', 'Vrijeme', 'Predmet', 'Razred', 'Nastavna tema', 'Nastavna jedinica', 'Naziv dokumenta', 'Link'];
+
+async function dobijIliKreirajEvidencijuSheet(accessToken, folderId) {
+  const sacuvaniId = localStorage.getItem('gdrive_sheet_id');
+
+  if (sacuvaniId) {
+    const provjera = await fetch('https://www.googleapis.com/drive/v3/files/' + sacuvaniId + '?fields=id,trashed', {
+      headers: { 'Authorization': 'Bearer ' + accessToken }
+    });
+    if (provjera.ok) {
+      const podaci = await provjera.json();
+      if (!podaci.trashed) return sacuvaniId;
+    }
+    // Tabela je obrisana/nedostupna - nastavi na pretragu/kreiranje ispod
+    localStorage.removeItem('gdrive_sheet_id');
+  }
+
+  // Nema zapisa u ovom browseru (npr. drugi uređaj) - pretraži Google Drive
+  // po nazivu, da se ne pravi duplikat tabele koja već postoji na nalogu.
+  const upit = encodeURIComponent(
+    "name='" + GOOGLE_SHEET_NAZIV + "' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false"
+  );
+  const pretraga = await fetch(
+    'https://www.googleapis.com/drive/v3/files?q=' + upit + '&fields=files(id,name,createdTime)&orderBy=createdTime&pageSize=10',
+    { headers: { 'Authorization': 'Bearer ' + accessToken } }
+  );
+
+  if (pretraga.ok) {
+    const rezultatPretrage = await pretraga.json();
+    if (rezultatPretrage.files && rezultatPretrage.files.length > 0) {
+      // Uzmi najstariju (prvu ikad napravljenu) da se izbjegne slučajna promjena
+      const postojeciId = rezultatPretrage.files[0].id;
+      localStorage.setItem('gdrive_sheet_id', postojeciId);
+      return postojeciId;
+    }
+  }
+
+  const kreiraj = await fetch('https://sheets.googleapis.com/v4/spreadsheets', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + accessToken,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      properties: { title: GOOGLE_SHEET_NAZIV },
+      sheets: [{ properties: { title: 'Evidencija' } }]
+    })
+  });
+
+  if (!kreiraj.ok) {
+    const errText = await kreiraj.text();
+    throw new Error('Greška pri kreiranju tabele evidencije (' + kreiraj.status + '): ' + errText.slice(0, 300));
+  }
+
+  const noviSheet = await kreiraj.json();
+  const sheetId = noviSheet.spreadsheetId;
+
+  // Upiši red sa zaglavljem
+  await fetch('https://sheets.googleapis.com/v4/spreadsheets/' + sheetId + '/values/A1:H1?valueInputOption=RAW', {
+    method: 'PUT',
+    headers: {
+      'Authorization': 'Bearer ' + accessToken,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ values: [EVIDENCIJA_ZAGLAVLJE] })
+  });
+
+  // Podebljaj zaglavlje (kozmetika - nije kritično ako ne uspije)
+  try {
+    await fetch('https://sheets.googleapis.com/v4/spreadsheets/' + sheetId + ':batchUpdate', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + accessToken,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        requests: [{
+          repeatCell: {
+            range: { sheetId: 0, startRowIndex: 0, endRowIndex: 1 },
+            cell: { userEnteredFormat: { textFormat: { bold: true } } },
+            fields: 'userEnteredFormat.textFormat.bold'
+          }
+        }]
+      })
+    });
+  } catch (err) { /* nije kritično */ }
+
+  // Premjesti tabelu u istu fasciklu kao ostali dokumenti (ako je dostupna)
+  if (folderId) {
+    try {
+      await fetch('https://www.googleapis.com/drive/v3/files/' + sheetId + '?addParents=' + folderId, {
+        method: 'PATCH',
+        headers: { 'Authorization': 'Bearer ' + accessToken }
+      });
+    } catch (err) { /* nije kritično */ }
+  }
+
+  localStorage.setItem('gdrive_sheet_id', sheetId);
+  return sheetId;
+}
+
+async function dodajRedUEvidenciju(accessToken, sheetId, red) {
+  const response = await fetch(
+    'https://sheets.googleapis.com/v4/spreadsheets/' + sheetId + '/values/A:H:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS',
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + accessToken,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ values: [red] })
+    }
+  );
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error('Greška pri upisu u evidenciju (' + response.status + '): ' + errText.slice(0, 300));
+  }
+
+  return await response.json();
+}
+
+async function sacuvajNaDrive() {
+  const status = el('status');
+  const btn = el('sacuvajDrive');
+  const originalHtml = btn.innerHTML;
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Povezujem se sa Google nalogom...';
+  status.className = '';
+  status.textContent = '';
+
+  try {
+    const blob = await generisiDocxBlob();
+    const naziv = nazivFajla();
+
+    let aktivniToken = await zatraziGoogleToken();
+
+    btn.innerHTML = '<span class="spinner"></span>Pripremam fasciklu...';
+    let aktivniFolderId;
+    try {
+      aktivniFolderId = await dobijIliKreirajFolder(aktivniToken);
+    } catch (err) {
+      aktivniFolderId = null; // ako fascikla ne uspije, ide u root (bolje nego potpuni fail)
+    }
+
+    btn.innerHTML = '<span class="spinner"></span>Šaljem na Google Drive...';
+    let rezultat;
+    try {
+      rezultat = await otpremiNaDrive(aktivniToken, blob, naziv, aktivniFolderId);
+    } catch (err) {
+      // Ako je token istekao, pokušaj jednom ponovo sa svježom prijavom
+      if (err.message.indexOf('401') !== -1) {
+        aktivniToken = await zatraziGoogleToken();
+        aktivniFolderId = await dobijIliKreirajFolder(aktivniToken).catch(() => null);
+        rezultat = await otpremiNaDrive(aktivniToken, blob, naziv, aktivniFolderId);
+      } else {
+        throw err;
+      }
+    }
+
+    // Upis u evidenciju (Google Sheets) - ako ne uspije, ne kvari uspješno čuvanje dokumenta
+    let evidencijaLink = '';
+    let evidencijaGreska = '';
+    try {
+      btn.innerHTML = '<span class="spinner"></span>Upisujem u evidenciju...';
+      const sheetId = await dobijIliKreirajEvidencijuSheet(aktivniToken, aktivniFolderId);
+      const sad = new Date();
+      await dodajRedUEvidenciju(aktivniToken, sheetId, [
+        sad.toLocaleDateString('bs-BA'),
+        sad.toLocaleTimeString('bs-BA', { hour: '2-digit', minute: '2-digit' }),
+        el('predmet').value.trim(),
+        el('razred').value.trim(),
+        el('tema').value.trim(),
+        el('jedinica').value.trim(),
+        naziv.replace(/\.docx$/i, ''),
+        (rezultat && rezultat.webViewLink) || ''
+      ]);
+      evidencijaLink = 'https://docs.google.com/spreadsheets/d/' + sheetId + '/edit';
+    } catch (err) {
+      evidencijaGreska = err.message;
+    }
+
+    status.className = 'ok';
+    let poruka = 'Sačuvano na Google Drive (fascikla "' + GOOGLE_DRIVE_FOLDER_NAME + '").';
+    if (rezultat && rezultat.webViewLink) {
+      poruka += ' <a href="' + rezultat.webViewLink + '" target="_blank" rel="noopener">Otvori dokument</a>';
+    }
+    if (evidencijaLink) {
+      poruka += ' &nbsp;|&nbsp; <a href="' + evidencijaLink + '" target="_blank" rel="noopener">Otvori evidenciju</a>';
+    } else if (evidencijaGreska) {
+      poruka += ' <span style="color:#b00020;">(upis u evidenciju nije uspio: ' + evidencijaGreska + ')</span>';
+    }
+    status.innerHTML = poruka;
+  } catch (err) {
+    status.className = 'err';
+    status.textContent = 'Greška pri čuvanju na Google Drive: ' + err.message;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  }
+}
+
+async function pitajAI() {
+  const status = el('status');
+  const predmet = (el('predmet') && el('predmet').value || '').trim();
+  const razred = (el('razred') && el('razred').value || '').trim();
+  const tema = (el('tema') && el('tema').value || '').trim();
+  const jedinica = (el('jedinica') && el('jedinica').value || '').trim();
+
+  if (!tema && !jedinica) {
+    status.className = 'err';
+    status.textContent = 'Unesi barem nastavnu temu ili jedinicu prije nego što tražiš proširenje teme.';
+    return;
+  }
+
+  let upit = 'Napiši kratak dodatni tekst (pasus ili dva) koji proširuje sljedeću nastavnu temu, kao dopunski materijal za čas iz predmeta ' + (predmet || '[predmet]');
+  if (razred) upit += ', razred ' + razred;
+  upit += '.\nNastavna tema: ' + (tema || '-');
+  upit += '\nNastavna jedinica: ' + (jedinica || '-');
+  upit += '\n\nNeka tekst bude sadržajan i primjenjiv u nastavi (npr. dodatno objašnjenje, zanimljivost, primjer iz prakse ili savremeni kontekst) - ne treba cijela priprema časa, samo prošireni tekst o temi.';
+  upit += '\n\nKonkretno mi treba: ';
+
+  try {
+    await navigator.clipboard.writeText(upit);
+    status.className = 'ok';
+    status.textContent = 'Upit za proširenje teme je kopiran u clipboard - Pitaj AI';
+  } catch (err) {
+    status.className = 'err';
+    status.textContent = 'Nije uspjelo automatsko kopiranje. Kopiraj ručno: ' + upit;
+  }
+
+  window.open('https://gemini.google.com/', '_blank');
+}
+
+// ---------- Direktna sinhronizacija sa appovima "Input" i "Lekcija" (preko localStorage) ----------
+// Napomena: ovo radi pouzdano kad su svi appovi hostovani na istom originu (npr. GitHub Pages).
+// Naziv drugih fajlova - promijeni ovdje ako ih preimenuješ na GitHubu.
+const INPUT_APP_URL = 'G_input_V_9_GEM.html';
+const NIVOI_APP_URL = 'G_lekcija_V_9_GEM.html';
+const NIVOI_STORAGE_KLJUC = 'gpriprema_zadnja_priprema';
+
+function izgradiPodatkeZaNivoe() {
+  return {
+    izvor: 'G_priprema',
+    verzija: 1,
+    predmet: (el('predmet') && el('predmet').value || '').trim(),
+    razred: (el('razred') && el('razred').value || '').trim(),
+    tema: (el('tema') && el('tema').value || '').trim(),
+    jedinica: (el('jedinica') && el('jedinica').value || '').trim(),
+    tipCasa: (el('tipCasa') && el('tipCasa').value || '').trim(),
+    datumIzrade: danasnjiDatum(),
+    vrijemeIzrade: Date.now(),
+    sadrzajHtml: el('rezultat').innerHTML,
+    sadrzajTekst: el('rezultat').innerText
+  };
+}
+
+function ucitajPripremuIzFajla(evt) {
+  const file = evt.target.files && evt.target.files[0];
+  const status = el('status');
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const podaci = JSON.parse(reader.result);
+      if (!podaci.sadrzajHtml && !podaci.sadrzajTekst) {
+        throw new Error('Fajl ne sadrži pripremu časa (nedostaje sadržaj).');
+      }
+
+      if (podaci.predmet) el('predmet').value = podaci.predmet;
+      if (podaci.razred) el('razred').value = podaci.razred;
+      if (podaci.tema) el('tema').value = podaci.tema;
+      if (podaci.jedinica) el('jedinica').value = podaci.jedinica;
+      if (podaci.tipCasa) el('tipCasa').value = podaci.tipCasa;
+
+      el('rezultat').innerHTML = podaci.sadrzajHtml || ('<p>' + (podaci.sadrzajTekst || '') + '</p>');
+      el('rezultat-wrap').style.display = 'block';
+      el('izvezWord').style.display = 'inline-block';
+      el('izvezi').style.display = 'inline-block';
+      el('sacuvajDrive').style.display = 'inline-block';
+      el('izvezInput').style.display = 'inline-block';
+      el('izvezNivoi').style.display = 'inline-block';
+      el('izvezJson').style.display = 'inline-block';
+      el('provjeraCinjenica').style.display = 'inline-block';
+      el('obrisi').style.display = 'inline-block';
+
+      try {
+        localStorage.setItem(NIVOI_STORAGE_KLJUC, JSON.stringify(podaci));
+      } catch (err) {
+        console.warn('Nije uspjelo automatsko čuvanje za app Lekcija:', err);
+      }
+
+      status.className = 'ok';
+      status.textContent = 'Priprema je vraćena iz fajla.';
+      el('rezultat-wrap').scrollIntoView({ behavior: 'smooth' });
+    } catch (err) {
+      status.className = 'err';
+      status.textContent = 'Greška pri čitanju fajla: ' + err.message;
+    }
+  };
+  reader.onerror = () => {
+    status.className = 'err';
+    status.textContent = 'Fajl se nije mogao pročitati.';
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function sacuvajZaNivoe() {
+  try {
+    localStorage.setItem(NIVOI_STORAGE_KLJUC, JSON.stringify(izgradiPodatkeZaNivoe()));
+  } catch (err) {
+    console.warn('Nije uspjelo automatsko čuvanje za app Lekcija:', err);
+  }
+}
+
+function otvoriNivoeZnanja() {
+  const status = el('status');
+  try {
+    sacuvajZaNivoe();
+    window.open(NIVOI_APP_URL, '_blank');
+    status.className = 'ok';
+    status.textContent = 'Priprema je proslijeđena app-u "Lekcija" - otvoren je u novoj kartici.';
+  } catch (err) {
+    status.className = 'err';
+    status.textContent = 'Greška pri otvaranju app-a Lekcija: ' + err.message;
+  }
+}
+
+function otvoriInput() {
+  const status = el('status');
+  try {
+    sacuvajZaNivoe();
+    window.open(INPUT_APP_URL, '_blank');
+    status.className = 'ok';
+    status.textContent = 'Priprema je proslijeđena app-u "Input" - otvoren je u novoj kartici.';
+  } catch (err) {
+    status.className = 'err';
+    status.textContent = 'Greška pri otvaranju app-a Input: ' + err.message;
+  }
+}
+
+// Rezervni izvoz .json fajla - za slučaj da automatsko prepoznavanje (localStorage)
+// ne uspije u app-u Lekcija (npr. drugi browser/uređaj) - tamo se fajl učita ručno.
+function izvezJsonRezerva() {
+  const status = el('status');
+  try {
+    const podaci = izgradiPodatkeZaNivoe();
+    const blob = new Blob([JSON.stringify(podaci, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    let osnova = [podaci.predmet, podaci.jedinica].filter(Boolean).join('_') || 'priprema';
+    osnova = osnova.replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, '_').slice(0, 80);
+    a.download = 'ZaLekciju_' + osnova + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    status.className = 'ok';
+    status.textContent = 'JSON fajl je preuzet - učitaj ga ručno u app "Lekcija" ako automatsko prepoznavanje ne radi.';
+  } catch (err) {
+    status.className = 'err';
+    status.textContent = 'Greška pri izvozu JSON-a: ' + err.message;
+  }
+}
+
+function obrisiPripremu() {
+  el('rezultat').innerHTML = '';
+  el('rezultat-wrap').style.display = 'none';
+  el('izvezWord').style.display = 'none';
+  el('izvezi').style.display = 'none';
+  el('sacuvajDrive').style.display = 'none';
+  el('izvezInput').style.display = 'none';
+  el('izvezNivoi').style.display = 'none';
+  el('izvezJson').style.display = 'none';
+  el('provjeraCinjenica').style.display = 'none';
+  el('provjeraRezultat').style.display = 'none';
+  el('provjeraRezultat').innerHTML = '';
+  el('nastavi').style.display = 'none';
+  el('obrisi').style.display = 'none';
+  el('status').className = '';
+  el('status').textContent = '';
+  razgovor = [];
+
+  // resetuj polja za unos radi nove pripreme
+  el('tema').value = '';
+  el('jedinica').value = '';
+  el('napDetaljnije').checked = false;
+  el('napPitanja').checked = false;
+  el('napLinkovi').checked = false;
+  el('napSlobodno').value = '';
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

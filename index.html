@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nastavni alati — PRO</title>
+<style>
+  :root {
+    --bg: #0d1420;
+    --bg-radial: #131d2e;
+    --panel: #161f2e;
+    --panel-2: #1c2739;
+    --border: #263449;
+    --border-soft: #1f2b3d;
+    --plava: #5b9bff;
+    --plava-tamna: #3d7ae0;
+    --tekst: #e7ecf5;
+    --tekst-prig: #93a1b8;
+    --tekst-slab: #63718a;
+    --zelena: #34c281;
+    --crvena: #f0716a;
+    --zlatna: #e0a94a;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: radial-gradient(circle at 18% 0%, var(--bg-radial) 0%, var(--bg) 55%);
+    color: var(--tekst);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  /* ---------- Ekran sa šifrom ---------- */
+  #kapija {
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+  }
+  .brava {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  #kapija h1 {
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0 0 6px;
+    letter-spacing: 0.2px;
+  }
+  #kapija .podnaslov {
+    color: var(--tekst-prig);
+    font-size: 13.5px;
+    margin: 0 0 26px;
+    line-height: 1.5;
+  }
+  .polje-sifra {
+    display: flex;
+    gap: 8px;
+  }
+  input[type=password] {
+    flex: 1;
+    background: var(--panel);
+    border: 1.5px solid var(--border);
+    color: var(--tekst);
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: inherit;
+    letter-spacing: 1px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  input[type=password]::placeholder { color: var(--tekst-slab); letter-spacing: 0; }
+  input[type=password]:focus {
+    outline: none;
+    border-color: var(--plava);
+    box-shadow: 0 0 0 3px rgba(91, 155, 255, 0.18);
+  }
+  #otkljucaj {
+    background: linear-gradient(135deg, var(--plava-tamna) 0%, var(--plava) 100%);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0 18px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 0.12s ease, box-shadow 0.15s ease;
+    box-shadow: 0 4px 12px rgba(61, 122, 224, 0.28);
+  }
+  #otkljucaj:hover { transform: translateY(-1px); }
+  #otkljucaj:active { transform: translateY(0); }
+  #greska {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--crvena);
+    min-height: 16px;
+  }
+
+  /* ---------- Ekran sa alatima ---------- */
+  #sadrzaj { display: none; width: 100%; max-width: 780px; }
+  .zaglavlje {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 26px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .zaglavlje h1 {
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: 0.2px;
+  }
+  .znacka {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--bg);
+    background: var(--zlatna);
+    padding: 3px 9px;
+    border-radius: 6px;
+    vertical-align: middle;
+    margin-left: 8px;
+  }
+  #zakljucaj {
+    background: transparent;
+    color: var(--tekst-prig);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 12.5px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  #zakljucaj:hover { border-color: var(--tekst-prig); color: var(--tekst); }
+
+  .mreza {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .kartica {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 22px 20px;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+    position: relative;
+  }
+  .kartica:hover {
+    border-color: var(--plava-tamna);
+    background: var(--panel-2);
+    transform: translateY(-2px);
+  }
+  .kartica .broj {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--tekst-slab);
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .kartica .ikona { font-size: 24px; margin-bottom: 12px; display: block; }
+  .kartica h2 {
+    font-size: 15.5px;
+    margin: 0 0 8px;
+    color: var(--tekst);
+  }
+  .kartica p {
+    font-size: 13px;
+    color: var(--tekst-prig);
+    line-height: 1.5;
+    margin: 0;
+  }
+  .kartica .strelica {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: var(--tekst-slab);
+    font-size: 15px;
+    transition: transform 0.15s ease, color 0.15s ease;
+  }
+  .kartica:hover .strelica { transform: translate(3px, -3px); color: var(--plava); }
+
+  .podnozje {
+    margin-top: 26px;
+    font-size: 12px;
+    color: var(--tekst-slab);
+    text-align: center;
+  }
+
+  @media (max-width: 480px) {
+    #kapija .polje-sifra { flex-direction: column; }
+    #otkljucaj { padding: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="kapija">
+  <div class="brava">🔒</div>
+  <h1>Nastavni alati</h1>
+  <p class="podnaslov">Ova stranica je zaštićena šifrom. Unesi šifru za pristup alatima.</p>
+  <div class="polje-sifra">
+    <input type="password" id="sifra" placeholder="Šifra" autofocus>
+    <button id="otkljucaj" onclick="otkljucaj()">Uđi</button>
+  </div>
+  <div id="greska"></div>
+</div>
+
+<div id="sadrzaj">
+  <div class="zaglavlje">
+    <h1>Nastavni alati <span class="znacka">PRO</span></h1>
+    <button id="zakljucaj" onclick="zakljucaj()">🔒 Zaključaj</button>
+  </div>
+
+  <div class="mreza">
+    <a class="kartica" href="G_priprema_V_9_GEM.html" target="_blank" rel="noopener">
+      <span class="strelica">↗</span>
+      <div class="broj">KORAK 1</div>
+      <span class="ikona">📥</span>
+      <h2>Priprema za nastavni čas</h2>
+      <p>Generisanje nastavne pripreme po propisanom obrascu, za čas od 45 ili 90 minuta.</p>
+    </a>
+
+    <a class="kartica" href="G_input_V_9_GEM.html" target="_blank" rel="noopener">
+      <span class="strelica">↗</span>
+      <div class="broj">KORAK 2</div>
+      <span class="ikona">🛠️</span>
+      <h2>Input — rad učenika na času</h2>
+      <p>Iz pripreme se razrađuje Glavni dio časa: instrukcija za učenike, trajanje, uloga nastavnika, način rada i očekivani rezultat.</p>
+    </a>
+
+    <a class="kartica" href="G_lekcija_V_9_GEM.html" target="_blank" rel="noopener">
+      <span class="strelica">↗</span>
+      <div class="broj">KORAK 3</div>
+      <span class="ikona">📖</span>
+      <h2>Lekcija za učenike</h2>
+      <p>Iz pripreme se generiše tekst lekcije prilagođen razredu i uzrastu učenika.</p>
+    </a>
+
+    <a class="kartica" href="G_provjera_znanja_V_9_GEM.html" target="_blank" rel="noopener">
+      <span class="strelica">↗</span>
+      <div class="broj">KORAK 4</div>
+      <span class="ikona">🎯</span>
+      <h2>Provjera znanja</h2>
+      <p>Iz lekcije se sastavljaju pitanja i zadaci na tri nivoa težine — niži, srednji, viši.</p>
+    </a>
+  </div>
+
+  <div class="podnozje">Alati se pokreću lokalno u browseru. Potreban je lični Groq ili Google Gemini API ključ.</div>
+</div>
+
+<script>
+// ---------- Šifra ----------
+// Šifra je hashovana (SHA-256) - u kodu ne stoji u čistom tekstu.
+// Podrazumijevana šifra je: ns2026
+// Da promijeniš šifru: otvori konzolu browsera (F12) na ovoj stranici i pokreni:
+//   crypto.subtle.digest('SHA-256', new TextEncoder().encode('NOVA_SIFRA')).then(b=>console.log(Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')))
+// Rezultat (64 karaktera) zalijepi ispod umjesto postojećeg HASH_SIFRE.
+const HASH_SIFRE = '18acab94708ae8a5e4340587cebbafbc35318311d3bc5884129c22fec9af0058';
+const KLJUC_SESIJE = 'nastavni_alati_otkljucano';
+
+async function heshuj(tekst) {
+  const podaci = new TextEncoder().encode(tekst);
+  const bafer = await crypto.subtle.digest('SHA-256', podaci);
+  return Array.from(new Uint8Array(bafer)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function prikaziSadrzaj() {
+  document.getElementById('kapija').style.display = 'none';
+  document.getElementById('sadrzaj').style.display = 'block';
+}
+
+function prikaziKapiju() {
+  document.getElementById('sadrzaj').style.display = 'none';
+  document.getElementById('kapija').style.display = 'block';
+  document.getElementById('sifra').value = '';
+  document.getElementById('sifra').focus();
+}
+
+async function otkljucaj() {
+  const unos = document.getElementById('sifra').value;
+  const greska = document.getElementById('greska');
+  if (!unos) {
+    greska.textContent = 'Unesi šifru.';
+    return;
+  }
+  const hesh = await heshuj(unos);
+  if (hesh === HASH_SIFRE) {
+    greska.textContent = '';
+    sessionStorage.setItem(KLJUC_SESIJE, '1');
+    prikaziSadrzaj();
+  } else {
+    greska.textContent = 'Pogrešna šifra. Pokušaj ponovo.';
+  }
+}
+
+function zakljucaj() {
+  sessionStorage.removeItem(KLJUC_SESIJE);
+  prikaziKapiju();
+}
+
+document.getElementById('sifra').addEventListener('keydown', e => {
+  if (e.key === 'Enter') otkljucaj();
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (sessionStorage.getItem(KLJUC_SESIJE) === '1') {
+    prikaziSadrzaj();
+  }
+});
+</script>
+</body>
+</html>
