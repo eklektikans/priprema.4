@@ -216,25 +216,72 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
+  /* ===== ŠTAMPA / PDF (verzija B) ===== */
   @media print {
-    body { background: none; padding: 0; }
+    @page {
+      size: A4;
+      margin: 17mm 18mm 20mm 18mm;
+      @bottom-center {
+        content: counter(page);
+        font: 9pt 'Segoe UI', Carlito, 'Liberation Sans', Arial, sans-serif;
+        color: #555;
+      }
+    }
+    html, body { background: none !important; padding: 0 !important; margin: 0 !important; }
+    body {
+      font-family: 'Segoe UI', Carlito, 'Liberation Sans', Arial, sans-serif;
+      font-size: 10pt; line-height: 1.42; color: #1a1a1a;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
     .panel, .dugmad, #status, h1, .podnaslov { display: none !important; }
     #rezultat-wrap { display: block !important; }
-    #rezultat { border: none; padding: 0; box-shadow: none; }
-
-    @page {
-      margin: 15mm;
-    }
+    #rezultat-wrap > br { display: none; }
 
     .naslov-pripreme {
       display: block !important;
-      text-align: center;
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      color: var(--plava);
-      margin: 0 0 22px 0;
+      text-align: center; font-weight: 700; font-size: 16pt; letter-spacing: 2.5px;
+      color: #fff; background: var(--plava);
+      padding: 10px 0; margin: 0 0 10px 0;
     }
+
+    #rezultat {
+      border: none; border-radius: 0; box-shadow: none; background: none;
+      padding: 0; font-size: 10pt; line-height: 1.42;
+    }
+    #rezultat h2 {
+      font-size: 10pt; letter-spacing: .6px; color: #14305a;
+      background: #eef2f8; border: none; border-left: 4px solid var(--plava);
+      margin: 13px 0 6px; padding: 3px 8px;
+      break-after: avoid;
+    }
+    #rezultat h2:first-child { margin-top: 0; }
+    #rezultat h3 {
+      font-size: 10pt; color: var(--plava);
+      margin: 9px 0 3px; padding-bottom: 1px; border-bottom: 1px dotted var(--plava);
+      break-after: avoid;
+    }
+    #rezultat p { margin: 0 0 3px; }
+    #rezultat p, #rezultat li { break-inside: avoid; orphans: 2; widows: 2; }
+    #rezultat ul, #rezultat ol { margin: 3px 0 5px; padding-left: 20px; }
+    #rezultat li { margin: 1px 0; }
+    #rezultat strong { color: #111; }
+
+    /* Izgled table u tri kolone */
+    #rezultat .tabla {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      border: 1px solid var(--plava); margin: 6px 0 4px; break-inside: avoid;
+    }
+    #rezultat .tabla .kol { padding: 6px 10px 4px; border-right: 1px solid #c9d3e3; }
+    #rezultat .tabla .kol:nth-child(3) { border-right: none; }
+    #rezultat .tabla .kol-naslov {
+      font-size: 8.5pt; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--plava); font-weight: 700; margin-bottom: 4px;
+    }
+    #rezultat .tabla .dz {
+      grid-column: 1 / -1; border-top: 1px solid #c9d3e3;
+      background: #eef2f8; padding: 6px 10px;
+    }
+    #rezultat .tabla p { margin: 0 0 3px; }
   }
 
   .naslov-pripreme { display: none; }
@@ -1736,6 +1783,111 @@ function obrisiPripremu() {
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+// ---------- Priprema za štampu: "Izgled table" u tri kolone ----------
+// Radi se SAMO tokom štampe (beforeprint) i vraća nazad poslije (afterprint),
+// pa ne utiče na sačuvani sadržaj, Word izvoz ni Google Drive.
+let _rezultatPrijeStampe = null;
+
+function tablaUTriKolone() {
+  const rez = document.getElementById('rezultat');
+  if (!rez) return;
+  const h2s = Array.from(rez.querySelectorAll('h2'));
+  const naslov = h2s.find(h => /^\s*VIII\b/i.test(h.textContent) || /IZGLED\s*\(PLAN\)\s*TABLE/i.test(h.textContent));
+  if (!naslov) return;
+
+  // elementi između naslova VIII i sljedećeg h2
+  const elementi = [];
+  let n = naslov.nextElementSibling;
+  while (n && n.tagName.toLowerCase() !== 'h2') { elementi.push(n); n = n.nextElementSibling; }
+
+  const tip = (el) => {
+    const t = (el.textContent || '').trim().toLowerCase();
+    if (/^lijev/.test(t)) return 'l';
+    if (/^srednj/.test(t)) return 's';
+    if (/^desn/.test(t)) return 'd';
+    if (/^donji/.test(t) || /^domać/.test(t) || /^domaca/.test(t)) return 'z';
+    return null;
+  };
+
+  const kolone = { l: [], s: [], d: [], z: [] };
+  const prije = [];
+  let trenutna = null;
+  elementi.forEach(el => {
+    const t = tip(el);
+    if (t) trenutna = t;
+    if (trenutna) kolone[trenutna].push({ el, pocetak: !!t });
+    else prije.push(el);
+  });
+  // Ako nisu prepoznate sve tri kolone, ne diraj ništa (siguran povratak na običan prikaz)
+  if (!kolone.l.length || !kolone.s.length || !kolone.d.length) return;
+
+  const ocisti = (txt) => txt.replace(/\s*table\s*$/i, '').replace(/\s*[:\-–]\s*$/, '').trim();
+  const napraviKolonu = (stavke, defNaslov) => {
+    const div = document.createElement('div');
+    div.className = 'kol';
+    const nas = document.createElement('div');
+    nas.className = 'kol-naslov';
+    nas.textContent = defNaslov;
+    div.appendChild(nas);
+    stavke.forEach(({ el, pocetak }) => {
+      const c = el.cloneNode(true);
+      if (pocetak) {
+        // ukloni labelu "Lijeva strana table:" (postaje naslov kolone)
+        const st = c.querySelector('strong, b');
+        if (st && /^(lijev|srednj|desn)/i.test(st.textContent.trim())) {
+          st.remove();
+          c.innerHTML = c.innerHTML.replace(/^\s*[:\-–]?\s*/, '').replace(/^(<br\s*\/?>)+/i, '');
+        } else {
+          c.innerHTML = c.innerHTML.replace(/^\s*(lijeva|srednji|desna)[^:]*:\s*/i, '');
+        }
+        if (!c.textContent.trim()) return; // prazna labela
+      }
+      div.appendChild(c);
+    });
+    return div;
+  };
+
+  const tabla = document.createElement('div');
+  tabla.className = 'tabla';
+  tabla.appendChild(napraviKolonu(kolone.l, 'Lijeva strana'));
+  tabla.appendChild(napraviKolonu(kolone.s, 'Srednji dio'));
+  tabla.appendChild(napraviKolonu(kolone.d, 'Desna strana'));
+
+  if (kolone.z.length) {
+    const dz = document.createElement('div');
+    dz.className = 'dz';
+    kolone.z.forEach(({ el }) => {
+      const c = el.cloneNode(true);
+      // "Donji dio table - po potrebi: domaća zadaća: ..." -> "Domaća zadaća: ..."
+      const m = c.innerHTML.match(/^(?:\s*<strong>)?\s*donji dio table[^:]*:\s*(?:<\/strong>)?\s*(.*)$/is);
+      if (m) {
+        let ostatak = m[1].replace(/^(<strong>)?\s*domaća zadaća\s*:\s*(<\/strong>)?\s*/i, '');
+        c.innerHTML = '<strong>Domaća zadaća:</strong> ' + ostatak;
+      }
+      dz.appendChild(c);
+    });
+    tabla.appendChild(dz);
+  }
+
+  // Ukloni originalne elemente koji su ušli u kolone i umetni tablu
+  [].concat(kolone.l, kolone.s, kolone.d, kolone.z).forEach(({ el }) => el.remove());
+  naslov.insertAdjacentElement('afterend', tabla);
+  // Elementi koji su bili prije prve kolone (npr. "Nastavna jedinica:") ostaju iznad table
+  prije.forEach(el => tabla.parentNode.insertBefore(el, tabla));
+}
+
+window.addEventListener('beforeprint', () => {
+  const rez = document.getElementById('rezultat');
+  if (!rez || !rez.innerHTML.trim() || _rezultatPrijeStampe !== null) return;
+  _rezultatPrijeStampe = rez.innerHTML;
+  try { tablaUTriKolone(); } catch (e) { console.warn('Tabla u tri kolone preskočena:', e); rez.innerHTML = _rezultatPrijeStampe; }
+});
+window.addEventListener('afterprint', () => {
+  const rez = document.getElementById('rezultat');
+  if (rez && _rezultatPrijeStampe !== null) { rez.innerHTML = _rezultatPrijeStampe; }
+  _rezultatPrijeStampe = null;
+});
 </script>
 </body>
 </html>
