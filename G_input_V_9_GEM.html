@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Input — rad učenika na času V1.0</title>
+<title>Input_V.11</title>
 <style>
   :root {
     --plava: #1e4d8b;
@@ -221,7 +221,7 @@
 <body>
 <div class="wrap">
   <h1>Input — rad učenika na času</h1>
-  <div class="podnaslov">Iz pripreme za nastavni čas dodaje se konkretan operativni plan i instrukcija za učenike za rad na času. Koristi se platformu Groq AI ili Google Gemini.</div>
+  <div class="podnaslov">Iz pripreme za nastavni čas se razrađuju: tačna instrukcija za učenike,  uloga nastavnika, način rada, materijali i očekivani rezultat.</div>
 
   <div class="panel">
     <h2>🔑 AI platforma</h2>
@@ -234,7 +234,7 @@
     <div id="grupaGroq" style="margin-top:12px;">
       <label for="apiKeyGroq">Groq API ključ</label>
       <input type="password" id="apiKeyGroq" placeholder="gsk_...">
-      <div class="napomena">Ključ se čuva samo lokalno u browseru (localStorage). Ako si ga već unio/la u drugom alatu u istom browseru, ovdje se automatski učitava.</div>
+      <div class="napomena">Ključ se čuva samo lokalno.</div>
     </div>
 
     <div id="grupaGemini" style="margin-top:12px; display:none;">
@@ -1077,6 +1077,45 @@ async function sacuvajNaDrive() {
     btn.innerHTML = originalHtml;
   }
 }
+
+// ---------- Naziv PDF fajla pri štampi: "SOC_Input - Naziv nastavne jedinice" ----------
+// Preglednik za predloženi naziv PDF-a koristi naslov stranice (document.title).
+// Naslov se postavlja prije štampe i vraća poslije.
+let _naslovPrijeStampe = null;
+
+function skracenicaPredmeta(predmet) {
+  const mapa = { 'filozofija': 'FIL', 'sociologija': 'SOC' };
+  const k = (predmet || '').trim().toLowerCase();
+  if (mapa[k]) return mapa[k];
+  return (predmet || '').trim().replace(/[^A-Za-zČčĆćŠšŽžĐđ]/g, '').slice(0, 3).toLocaleUpperCase('bs');
+}
+
+function nazivPdfaZaStampu() {
+  const jed = (ucitaniPodaci && ucitaniPodaci.jedinica || '').trim();
+  if (!jed) return null;
+  const pre = skracenicaPredmeta(ucitaniPodaci && ucitaniPodaci.predmet);
+  const cisto = jed
+    .replace(/\s*;\s*/g, ', ')
+    .replace(/[\\/:*?"<>|]/g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/[.\s]+$/, '')
+    .trim()
+    .slice(0, 100);
+  if (!cisto) return null;
+  return (pre ? pre + '_' : '') + 'Input - ' + cisto;
+}
+
+window.addEventListener('beforeprint', () => {
+  if (_naslovPrijeStampe !== null) return;
+  const naziv = nazivPdfaZaStampu();
+  if (!naziv) return;
+  _naslovPrijeStampe = document.title;
+  document.title = naziv;
+});
+window.addEventListener('afterprint', () => {
+  if (_naslovPrijeStampe !== null) { document.title = _naslovPrijeStampe; }
+  _naslovPrijeStampe = null;
+});
 </script>
 </body>
 </html>
