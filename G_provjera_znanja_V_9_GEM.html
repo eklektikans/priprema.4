@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Provjera znanja - tri nivoa V1.0</title>
+<title>Provjera znanja - tri nivoa V.11</title>
 <style>
   :root {
     --plava: #1e4d8b;
@@ -1098,6 +1098,45 @@ async function sacuvajNaDrive() {
     btn.innerHTML = originalHtml;
   }
 }
+
+// ---------- Naziv PDF fajla pri štampi: "SOC_Provjera znanja - Naziv nastavne jedinice" ----------
+// Preglednik za predloženi naziv PDF-a koristi naslov stranice (document.title).
+// Naslov se postavlja prije štampe i vraća poslije.
+let _naslovPrijeStampe = null;
+
+function skracenicaPredmeta(predmet) {
+  const mapa = { 'filozofija': 'FIL', 'sociologija': 'SOC' };
+  const k = (predmet || '').trim().toLowerCase();
+  if (mapa[k]) return mapa[k];
+  return (predmet || '').trim().replace(/[^A-Za-zČčĆćŠšŽžĐđ]/g, '').slice(0, 3).toLocaleUpperCase('bs');
+}
+
+function nazivPdfaZaStampu() {
+  const jed = (ucitaniPodaci && ucitaniPodaci.jedinica || '').trim();
+  if (!jed) return null;
+  const pre = skracenicaPredmeta(ucitaniPodaci && ucitaniPodaci.predmet);
+  const cisto = jed
+    .replace(/\s*;\s*/g, ', ')
+    .replace(/[\\/:*?"<>|]/g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/[.\s]+$/, '')
+    .trim()
+    .slice(0, 100);
+  if (!cisto) return null;
+  return (pre ? pre + '_' : '') + 'Provjera znanja - ' + cisto;
+}
+
+window.addEventListener('beforeprint', () => {
+  if (_naslovPrijeStampe !== null) return;
+  const naziv = nazivPdfaZaStampu();
+  if (!naziv) return;
+  _naslovPrijeStampe = document.title;
+  document.title = naziv;
+});
+window.addEventListener('afterprint', () => {
+  if (_naslovPrijeStampe !== null) { document.title = _naslovPrijeStampe; }
+  _naslovPrijeStampe = null;
+});
 </script>
 </body>
 </html>
