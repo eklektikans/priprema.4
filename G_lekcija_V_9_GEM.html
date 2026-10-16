@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lekcija za učenike V.11</title>
+<title>Lekcija za učenike V.14</title>
 <style>
   :root {
     --plava: #1e4d8b;
@@ -208,23 +208,69 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
+  /* ===== ŠTAMPA / PDF - isti izgled kao G_priprema (verzija B) ===== */
   @media print {
-    body { background: none; padding: 0; }
+    @page {
+      size: A4;
+      margin: 17mm 18mm 20mm 18mm;
+      @bottom-center {
+        content: counter(page);
+        font: 9pt 'Segoe UI', Carlito, 'Liberation Sans', Arial, sans-serif;
+        color: #555;
+      }
+    }
+    html, body { background: none !important; padding: 0 !important; margin: 0 !important; }
+    body {
+      font-family: 'Segoe UI', Carlito, 'Liberation Sans', Arial, sans-serif;
+      font-size: 10pt; line-height: 1.42; color: #1a1a1a;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
     .panel, .dugmad, #status, h1, .podnaslov, .broj-rijeci { display: none !important; }
     #rezultat-wrap { display: block !important; }
-    #rezultat { border: none; padding: 0; box-shadow: none; }
-    @page { margin: 15mm; }
+    #rezultat-wrap > br { display: none; }
+
     .naslov-pripreme {
       display: block !important;
-      text-align: center;
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      color: var(--plava);
-      margin: 0 0 22px 0;
+      text-align: center; font-weight: 700; font-size: 12pt; letter-spacing: 2.5px;
+      color: #fff; background: var(--plava);
+      padding: 10px 0; margin: 0 0 10px 0;
     }
+
+    .ident {
+      display: block !important; text-align: center; font-size: 9pt; color: #555;
+      margin: -2px 0 8px; letter-spacing: .3px;
+    }
+
+    #rezultat {
+      border: none; border-radius: 0; box-shadow: none; background: none;
+      padding: 0; font-size: 10pt; line-height: 1.42;
+    }
+    #rezultat h2 {
+      font-size: 10pt; letter-spacing: .6px; color: #14305a;
+      background: #eef2f8; border: none; border-left: 4px solid var(--plava); border-radius: 0;
+      margin: 13px 0 6px; padding: 3px 8px;
+      break-after: avoid;
+    }
+    #rezultat h2:first-child { margin-top: 0; }
+    #rezultat h3 {
+      font-size: 10pt; color: var(--plava);
+      margin: 9px 0 3px; padding: 0 0 1px; border: none; border-bottom: 1px dotted var(--plava);
+      break-after: avoid;
+    }
+    #rezultat p { margin: 0 0 4px; text-align: left; }
+    #rezultat p, #rezultat li { break-inside: avoid; orphans: 2; widows: 2; }
+    #rezultat ul, #rezultat ol { margin: 3px 0 5px; padding-left: 20px; }
+    #rezultat li { margin: 1px 0; }
+    #rezultat strong { color: #111; }
+    /* Lekcija je tekst za čitanje: nešto veći font, poravnat tekst */
+    #rezultat, #rezultat p { font-size: 10.5pt; line-height: 1.5; }
+    #rezultat p { text-align: justify; margin: 0 0 6px; }
+    #rezultat li { font-size: 10.5pt; }
+
   }
+
   .naslov-pripreme { display: none; }
+  .ident { display: none; }
 
   @media (max-width: 640px) {
     body { padding: 14px; }
@@ -301,6 +347,7 @@
       <span>Tekst lekcije je generisan pomoću AI-a i može sadržavati greške. <strong>Obavezno provjeri prije nego što ga učenici počnu koristiti.</strong> Dugme "Provjeri činjenice" može pomoći, ali ne zamjenjuje tvoju provjeru.</span>
     </div>
     <div class="naslov-pripreme" id="naslovPripreme">LEKCIJA ZA UČENIKE</div>
+  <div class="ident" id="identRed"></div>
     <div id="rezultat"></div>
     <div id="provjeraRezultat"></div>
     <div class="broj-rijeci" id="brojRijeci"></div>
@@ -864,9 +911,12 @@ function paragrafXml(node, pStyle, numPr) {
   return '<w:p>' + pPr + runoviUXml(runovi) + '</w:p>';
 }
 
+let _docxOlBrojac = [];
 function htmlUDocxTijelo(container) {
+  _docxOlBrojac = [];
   let xml = '';
   xml += '<w:p><w:pPr><w:pStyle w:val="NaslovPripreme"/></w:pPr><w:r><w:t>' + xmlEscape(el('naslovPripreme').textContent) + '</w:t></w:r></w:p>';
+  xml += identParagrafXml();
 
   container.childNodes.forEach(node => {
     if (node.nodeType !== Node.ELEMENT_NODE) return;
@@ -879,7 +929,8 @@ function htmlUDocxTijelo(container) {
     } else if (tag === 'p') {
       xml += paragrafXml(node, 'Normal');
     } else if (tag === 'ul' || tag === 'ol') {
-      const numId = tag === 'ul' ? '1' : '2';
+      let numId = '1';
+      if (tag === 'ol') { numId = String(10 + _docxOlBrojac.length); _docxOlBrojac.push(numId); }
       Array.from(node.children).forEach(li => {
         if (li.tagName.toLowerCase() !== 'li') return;
         const numPr = '<w:numPr><w:ilvl w:val="0"/><w:numId w:val="' + numId + '"/></w:numPr>';
@@ -900,6 +951,7 @@ const DOCX_CONTENT_TYPES = '<?xml version="1.0" encoding="UTF-8" standalone="yes
 '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
 '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>' +
 '<Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>' +
+'<Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/>' +
 '</Types>';
 
 const DOCX_RELS = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
@@ -911,24 +963,12 @@ const DOCX_DOCUMENT_RELS = '<?xml version="1.0" encoding="UTF-8" standalone="yes
 '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
 '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>' +
 '<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>' +
+'<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/>' +
 '</Relationships>';
 
-const DOCX_STYLES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-'<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
-'<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:sz w:val="22"/></w:rPr></w:rPrDefault></w:docDefaults>' +
-'<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:pPr><w:spacing w:after="140" w:line="276" w:lineRule="auto"/></w:pPr></w:style>' +
-'<w:style w:type="paragraph" w:styleId="NaslovPripreme"><w:name w:val="Naslov pripreme"/><w:basedOn w:val="Normal"/>' +
-'<w:pPr><w:jc w:val="center"/><w:spacing w:after="360"/></w:pPr>' +
-'<w:rPr><w:b/><w:sz w:val="32"/><w:color w:val="1E4D8B"/></w:rPr></w:style>' +
-'<w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/>' +
-'<w:pPr><w:spacing w:before="280" w:after="140"/><w:border><w:bottom w:val="single" w:sz="6" w:space="4" w:color="1E4D8B"/></w:border></w:pPr>' +
-'<w:rPr><w:b/><w:sz w:val="26"/><w:color w:val="1E4D8B"/></w:rPr></w:style>' +
-'<w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/>' +
-'<w:pPr><w:spacing w:before="200" w:after="100"/></w:pPr>' +
-'<w:rPr><w:b/><w:sz w:val="23"/><w:color w:val="333333"/></w:rPr></w:style>' +
-'<w:style w:type="paragraph" w:styleId="ListParagraph"><w:name w:val="List Paragraph"/><w:basedOn w:val="Normal"/>' +
-'<w:pPr><w:ind w:left="360"/><w:spacing w:after="80"/></w:pPr></w:style>' +
-'</w:styles>';
+const DOCX_FOOTER = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:ftr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:color w:val="555555"/><w:sz w:val="18"/></w:rPr><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:rPr><w:color w:val="555555"/><w:sz w:val="18"/></w:rPr><w:instrText xml:space="preserve"> PAGE </w:instrText></w:r><w:r><w:rPr><w:color w:val="555555"/><w:sz w:val="18"/></w:rPr><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:rPr><w:color w:val="555555"/><w:sz w:val="18"/></w:rPr><w:t>1</w:t></w:r><w:r><w:rPr><w:color w:val="555555"/><w:sz w:val="18"/></w:rPr><w:fldChar w:fldCharType="end"/></w:r></w:p></w:ftr>';
+
+const DOCX_STYLES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/><w:sz w:val="21"/><w:szCs w:val="21"/></w:rPr></w:rPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:pPr><w:spacing w:before="0" w:after="120" w:line="360" w:lineRule="auto"/><w:jc w:val="both"/></w:pPr></w:style><w:style w:type="paragraph" w:styleId="NaslovPripreme"><w:name w:val="Naslov pripreme"/><w:basedOn w:val="Normal"/><w:pPr><w:pBdr><w:top w:val="single" w:sz="32" w:space="1" w:color="1E4D8B"/><w:bottom w:val="single" w:sz="32" w:space="1" w:color="1E4D8B"/></w:pBdr><w:shd w:val="clear" w:color="auto" w:fill="1E4D8B"/><w:spacing w:before="120" w:after="160"/><w:jc w:val="center"/></w:pPr><w:rPr><w:b/><w:color w:val="FFFFFF"/><w:spacing w:val="50"/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Ident"><w:name w:val="Ident"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:before="40" w:after="160"/><w:jc w:val="center"/></w:pPr><w:rPr><w:color w:val="555555"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:pPr><w:keepNext/><w:pBdr><w:left w:val="single" w:sz="24" w:space="4" w:color="1E4D8B"/></w:pBdr><w:shd w:val="clear" w:color="auto" w:fill="EEF2F8"/><w:spacing w:before="260" w:after="120" w:line="300" w:lineRule="auto"/><w:jc w:val="left"/></w:pPr><w:rPr><w:b/><w:color w:val="14305A"/><w:spacing w:val="12"/><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:pPr><w:keepNext/><w:pBdr><w:bottom w:val="dotted" w:sz="6" w:space="1" w:color="1E4D8B"/></w:pBdr><w:spacing w:before="180" w:after="80"/><w:jc w:val="left"/></w:pPr><w:rPr><w:b/><w:color w:val="1E4D8B"/><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="ListParagraph"><w:name w:val="List Paragraph"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:after="40"/><w:jc w:val="left"/></w:pPr></w:style><w:style w:type="paragraph" w:styleId="LinijaBiljeske"><w:name w:val="Linija za biljeske"/><w:basedOn w:val="Normal"/><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="4" w:space="1" w:color="999999"/></w:pBdr><w:spacing w:before="0" w:after="0" w:line="440" w:lineRule="exact"/><w:jc w:val="left"/></w:pPr></w:style></w:styles>';
 
 const DOCX_NUMBERING = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
 '<w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
@@ -941,14 +981,8 @@ const DOCX_NUMBERING = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
 '</w:numbering>';
 
 function nazivFajla() {
-  const predmet = (ucitaniPodaci && ucitaniPodaci.predmet || '').trim();
-  const jedinica = (ucitaniPodaci && ucitaniPodaci.jedinica || '').trim();
-  let osnova = ['Lekcija', predmet, jedinica].filter(Boolean).join('_') || 'lekcija';
-  osnova = osnova
-    .replace(/[\\/:*?"<>|]/g, '')
-    .replace(/\s+/g, '_')
-    .slice(0, 80);
-  return osnova + '.docx';
+  const n = nazivPdfaZaStampu();
+  return (n || 'Lekcija').replace(/[\\/:*?"<>|]/g, '') + '.docx';
 }
 
 async function generisiDocxBlob() {
@@ -959,10 +993,10 @@ async function generisiDocxBlob() {
   const tijeloXml = htmlUDocxTijelo(el('rezultat'));
 
   const documentXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-    '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+    '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' +
     '<w:body>' + tijeloXml +
-    '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/>' +
-    '<w:pgMar w:top="1417" w:right="1417" w:bottom="1417" w:left="1417" w:header="708" w:footer="708" w:gutter="0"/>' +
+    '<w:sectPr><w:footerReference w:type="default" r:id="rId3"/><w:pgSz w:w="11906" w:h="16838"/>' +
+    '<w:pgMar w:top="964" w:right="1020" w:bottom="1134" w:left="1020" w:header="567" w:footer="567" w:gutter="0"/>' +
     '</w:sectPr></w:body></w:document>';
 
   const zip = new JSZip();
@@ -970,7 +1004,9 @@ async function generisiDocxBlob() {
   zip.folder('_rels').file('.rels', DOCX_RELS);
   zip.folder('word').file('document.xml', documentXml);
   zip.folder('word').file('styles.xml', DOCX_STYLES);
-  zip.folder('word').file('numbering.xml', DOCX_NUMBERING);
+  zip.folder('word').file('footer1.xml', DOCX_FOOTER);
+  const dodatniNum = _docxOlBrojac.map(id => '<w:num w:numId="' + id + '"><w:abstractNumId w:val="1"/><w:lvlOverride w:ilvl="0"><w:startOverride w:val="1"/></w:lvlOverride></w:num>').join('');
+  zip.folder('word').file('numbering.xml', DOCX_NUMBERING.replace('</w:numbering>', dodatniNum + '</w:numbering>'));
   zip.folder('word/_rels').file('document.xml.rels', DOCX_DOCUMENT_RELS);
 
   return await zip.generateAsync({
@@ -1232,6 +1268,26 @@ window.addEventListener('beforeprint', () => {
 window.addEventListener('afterprint', () => {
   if (_naslovPrijeStampe !== null) { document.title = _naslovPrijeStampe; }
   _naslovPrijeStampe = null;
+});
+
+// ---------- Red s identifikacijom ispod naslova (predmet · razred · jedinica · datum) ----------
+function identTekst() {
+  const p = ucitaniPodaci || {};
+  const razred = (p.razred || '').replace(/\s*\(.*?\)\s*/g, '').trim();
+  const dijelovi = [(p.predmet || '').trim(), razred ? razred + ' razred' : '', (p.jedinica || '').trim()];
+  if (p.datumRealizacije && /^\d{4}-\d{2}-\d{2}$/.test(p.datumRealizacije)) {
+    const [g, m, d] = p.datumRealizacije.split('-');
+    dijelovi.push(d + '. ' + m + '. ' + g + '.');
+  }
+  return dijelovi.filter(Boolean).join('  ·  ');
+}
+function identParagrafXml() {
+  const t = identTekst();
+  return t ? '<w:p><w:pPr><w:pStyle w:val="Ident"/></w:pPr><w:r><w:t xml:space="preserve">' + xmlEscape(t) + '</w:t></w:r></w:p>' : '';
+}
+window.addEventListener('beforeprint', () => {
+  const r = document.getElementById('identRed');
+  if (r) r.textContent = identTekst();
 });
 </script>
 </body>
