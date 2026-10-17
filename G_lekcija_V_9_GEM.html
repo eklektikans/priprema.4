@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lekcija za učenike V.15</title>
+<title>Lekcija za učenike V.16</title>
 <style>
   :root {
     --plava: #1e4d8b;
@@ -281,6 +281,46 @@
     .dugmad button { width: 100%; }
     #rezultat { padding: 22px 20px; }
   }
+
+  /* ---- Slike u lekciji ---- */
+  figure.slika-lekcije {
+    position: relative;
+    margin: 6px auto 20px auto;
+    max-width: 360px;
+    text-align: center;
+    break-inside: avoid;
+  }
+  figure.slika-lekcije img {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    max-height: 230px;
+    width: auto;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(30, 77, 139, 0.12);
+  }
+  figure.slika-lekcije figcaption { margin-top: 6px; font-size: 12.5px; line-height: 1.35; color: #556; }
+  figure.slika-lekcije figcaption .izvor { display: block; font-size: 10.5px; color: #99a; margin-top: 2px; }
+  .slika-kontrole { position: absolute; top: 6px; right: 6px; display: flex; gap: 4px; opacity: 0; transition: opacity 0.15s ease; }
+  figure.slika-lekcije:hover .slika-kontrole { opacity: 1; }
+  .slika-kontrole button { padding: 4px 8px; font-size: 12px; background: rgba(255,255,255,0.92); color: var(--plava); box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+  @media print { .slika-kontrole { display: none !important; } }
+
+  /* ---- Ručno uređivanje teksta ---- */
+  #uredi { background: #e8edf5; color: var(--plava); display: none; }
+  #uredi:hover { background: #d5deec; box-shadow: 0 3px 10px rgba(30, 77, 139, 0.14); }
+  #uredi.aktivno { background: #fff3cd; color: #7a5b00; box-shadow: 0 0 0 2px #f0d38a; }
+  #rezultat.uredjivanje {
+    outline: 2px dashed var(--plava-svijetla);
+    outline-offset: 4px;
+    background: #fffef7;
+    cursor: text;
+  }
+  #rezultat.uredjivanje:focus { outline: 2px dashed var(--plava); }
+  #rezultat figure.slika-lekcije, #rezultat figure.slika-lekcije * { cursor: default; }
+  @media print { #rezultat.uredjivanje { outline: none !important; background: #fff !important; } }
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -331,6 +371,7 @@
 
   <div class="dugmad">
     <button id="generisi" onclick="generisiLekciju()" disabled>🌀 Generiši</button>
+    <button id="uredi" onclick="prebaciUredjivanje()" title="Uključi/isključi ručno uređivanje teksta lekcije">✏️ Uredi</button>
     <button id="izvezWord" onclick="izvezUWord()">💾 Word</button>
     <button id="izvezi" onclick="window.print()">📤 PDF</button>
     <button id="sacuvajDrive" onclick="sacuvajNaDrive()" style="display:none; background:#e8edf5; color:var(--plava);">☁️ Google Drive</button>
@@ -345,7 +386,7 @@
     <br>
     <div class="upozorenje">
       <span class="ikona-upoz">⚠️</span>
-      <span>Tekst lekcije je generisan pomoću AI-a i može sadržavati greške. <strong>Obavezno provjeri prije nego što ga učenici počnu koristiti.</strong> Dugme "Provjeri činjenice" može pomoći, ali ne zamjenjuje tvoju provjeru.</span>
+      <span>Tekst lekcije je generisan pomoću AI-a i može sadržavati greške. <strong>Obavezno provjeri prije nego što ga učenici počnu koristiti.</strong> Dugme "Provjeri činjenice" može pomoći, ali ne zamjenjuje tvoju provjeru. Slike se biraju automatski prema naslovu lekcije (Wikimedia Commons) - pređi mišem preko slike da je zamijeniš (🔄) ili ukloniš (✕).</span>
     </div>
     <div class="naslov-pripreme" id="naslovPripreme">LEKCIJA ZA UČENIKE</div>
   <div class="ident" id="identRed"></div>
@@ -669,6 +710,7 @@ async function generisiLekciju() {
   el('sacuvajDrive').style.display = 'none';
   el('izvezProvjera').style.display = 'none';
   el('izvezJson').style.display = 'none';
+  ugasiUredjivanje(true);
   el('rezultat-wrap').style.display = 'none';
   el('provjeraCinjenica').style.display = 'none';
   el('provjeraRezultat').style.display = 'none';
@@ -723,18 +765,20 @@ async function generisiLekciju() {
     el('sacuvajDrive').style.display = 'inline-block';
     el('izvezProvjera').style.display = 'inline-block';
     el('izvezJson').style.display = 'inline-block';
+    el('uredi').style.display = 'inline-block';
     el('obrisi').style.display = 'inline-block';
     el('provjeraCinjenica').style.display = 'inline-block';
     el('provjeraRezultat').style.display = 'none';
     el('provjeraRezultat').innerHTML = '';
 
     generisaniTekst = sadrzaj;
-    const brojac = prebrojRijeci(el('rezultat').innerText);
+    const brojac = prebrojRijeci(tekstLekcijeBezSlika());
     el('brojRijeci').textContent = 'Broj riječi u tekstu lekcije (bez ključnih pojmova): otprilike ' + brojac + ' (ciljani raspon za ovaj razred: ' + raspon.min + '-' + raspon.max + ').';
 
     status.className = 'ok';
     status.textContent = 'Lekcija je uspješno generisana.';
     el('rezultat-wrap').scrollIntoView({ behavior: 'smooth' });
+    dodajSlikeULekciju(apiKey, raspon);
 
   } catch (err) {
     status.className = 'err';
@@ -758,7 +802,7 @@ async function provjeriCinjenice() {
     return;
   }
 
-  const tekstLekcije = el('rezultat').innerText;
+  const tekstLekcije = tekstLekcijeBezSlika();
   if (!tekstLekcije.trim()) return;
 
   btn.disabled = true;
@@ -805,6 +849,7 @@ function obrisiSve() {
   el('sacuvajDrive').style.display = 'none';
   el('izvezProvjera').style.display = 'none';
   el('izvezJson').style.display = 'none';
+  ugasiUredjivanje(true);
   el('obrisi').style.display = 'none';
   el('provjeraCinjenica').style.display = 'none';
   el('provjeraRezultat').style.display = 'none';
@@ -816,6 +861,8 @@ function obrisiSve() {
   el('fajl').value = '';
   ucitaniPodaci = null;
   generisaniTekst = null;
+  slikePool = [];
+  slikeToken++;
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -829,8 +876,8 @@ function izgradiPodatkeZaProvjeru() {
     razred: (ucitaniPodaci && ucitaniPodaci.razred || ''),
     tema: (ucitaniPodaci && ucitaniPodaci.tema || ''),
     jedinica: (ucitaniPodaci && ucitaniPodaci.jedinica || ''),
-    tekstLekcijeHtml: el('rezultat').innerHTML,
-    tekstLekcijeText: el('rezultat').innerText
+    tekstLekcijeHtml: htmlLekcijeBezSlika(),
+    tekstLekcijeText: tekstLekcijeBezSlika()
   };
 }
 
@@ -931,7 +978,9 @@ function htmlUDocxTijelo(container) {
     if (node.nodeType !== Node.ELEMENT_NODE) return;
     const tag = node.tagName.toLowerCase();
 
-    if (tag === 'h2') {
+    if (tag === 'figure') {
+      xml += slikaParagrafXml(node);
+    } else if (tag === 'h2') {
       xml += paragrafXml(node, 'Heading1');
     } else if (tag === 'h3') {
       xml += paragrafXml(node, 'Heading2');
@@ -999,24 +1048,34 @@ async function generisiDocxBlob() {
     throw new Error('Biblioteka za izvoz u Word nije učitana (provjeri internet konekciju).');
   }
 
+  normalizirajRezultat();
+  _docxSlikeMapa = await pripremiSlikeZaDocx();
   const tijeloXml = htmlUDocxTijelo(el('rezultat'));
 
   const documentXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-    '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' +
+    '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing">' +
     '<w:body>' + tijeloXml +
     '<w:sectPr><w:footerReference w:type="default" r:id="rId3"/><w:pgSz w:w="11906" w:h="16838"/>' +
     '<w:pgMar w:top="964" w:right="1020" w:bottom="1134" w:left="1020" w:header="567" w:footer="567" w:gutter="0"/>' +
     '</w:sectPr></w:body></w:document>';
 
   const zip = new JSZip();
-  zip.file('[Content_Types].xml', DOCX_CONTENT_TYPES);
+  const contentTypes = DOCX_CONTENT_TYPES.replace('<Default Extension="xml"', '<Default Extension="png" ContentType="image/png"/><Default Extension="jpeg" ContentType="image/jpeg"/><Default Extension="xml"');
+  zip.file('[Content_Types].xml', contentTypes);
   zip.folder('_rels').file('.rels', DOCX_RELS);
   zip.folder('word').file('document.xml', documentXml);
   zip.folder('word').file('styles.xml', DOCX_STYLES);
   zip.folder('word').file('footer1.xml', DOCX_FOOTER);
   const dodatniNum = _docxOlBrojac.map(id => '<w:num w:numId="' + id + '"><w:abstractNumId w:val="1"/><w:lvlOverride w:ilvl="0"><w:startOverride w:val="1"/></w:lvlOverride></w:num>').join('');
   zip.folder('word').file('numbering.xml', DOCX_NUMBERING.replace('</w:numbering>', dodatniNum + '</w:numbering>'));
-  zip.folder('word/_rels').file('document.xml.rels', DOCX_DOCUMENT_RELS);
+  let docRels = DOCX_DOCUMENT_RELS;
+  let imgRels = '';
+  _docxSlikeMapa.forEach(info => {
+    zip.file('word/media/' + info.fajl, info.buf);
+    imgRels += '<Relationship Id="' + info.rId + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/' + info.fajl + '"/>';
+  });
+  docRels = docRels.replace('</Relationships>', imgRels + '</Relationships>');
+  zip.folder('word/_rels').file('document.xml.rels', docRels);
 
   return await zip.generateAsync({
     type: 'blob',
@@ -1297,6 +1356,310 @@ function identParagrafXml() {
 window.addEventListener('beforeprint', () => {
   const r = document.getElementById('identRed');
   if (r) r.textContent = identTekst();
+});
+
+
+// ---------- Slike u lekciji (Wikimedia Commons, preko URL linkova) ----------
+let slikePool = [];
+let slikeToken = 0;
+let _docxSlikeMapa = new Map();
+
+function tekstLekcijeBezSlika() {
+  const f = Array.from(el('rezultat').querySelectorAll('figure.slika-lekcije'));
+  const staro = f.map(x => x.style.display);
+  f.forEach(x => { x.style.display = 'none'; });
+  const t = el('rezultat').innerText;
+  f.forEach((x, i) => { x.style.display = staro[i]; });
+  return t;
+}
+
+function htmlLekcijeBezSlika() {
+  const c = el('rezultat').cloneNode(true);
+  c.querySelectorAll('figure.slika-lekcije').forEach(x => x.remove());
+  return c.innerHTML;
+}
+
+async function predloziPojmoveZaSlike(apiKey) {
+  const p = ucitaniPodaci || {};
+  const uputa = 'Za lekciju iz predmeta "' + (p.predmet || '') + '" (nastavna jedinica: "' + (p.jedinica || '') + '", tema: "' + (p.tema || '') + '") predloži 4 kratka izraza (1-3 riječi) za pretragu fotografija na Wikimedia Commons. ' +
+    'Izrazi moraju biti konkretni i vizuelni (npr. bista ili portret ličnosti, poznato mjesto, građevina, spomenik, predmet, historijski prizor), na engleskom jeziku ili u izvornom obliku imena. ' +
+    'Poredaj od najrelevantnijeg. Odgovori ISKLJUČIVO kao JSON niz stringova, npr. ["Epicurus bust","Garden of Epicurus"].';
+  try {
+    const rez = await pozoviAIPoruke(apiKey, [{ role: 'user', content: uputa }], { temperature: 0.3, maxTokens: 900, reasoningEffort: 'low' });
+    const m = (rez.sadrzaj || '').match(/\[[\s\S]*\]/);
+    if (!m) return [];
+    const niz = JSON.parse(m[0]);
+    return niz.filter(x => typeof x === 'string' && x.trim()).map(x => x.trim()).slice(0, 4);
+  } catch (e) {
+    return [];
+  }
+}
+
+function ocistiHtmlUTekst(h) {
+  const d = document.createElement('div');
+  d.innerHTML = h || '';
+  return (d.textContent || '').replace(/\s+/g, ' ').trim();
+}
+
+async function traziCommonsSlike(pojam) {
+  const url = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=20' +
+    '&gsrsearch=' + encodeURIComponent(pojam + ' filetype:bitmap') +
+    '&prop=imageinfo&iiprop=url|mime|size|extmetadata&iiurlwidth=480&iiextmetadatafilter=Artist|LicenseShortName';
+  const r = await fetch(url);
+  if (!r.ok) return [];
+  const d = await r.json();
+  const stranice = d.query && d.query.pages ? Object.values(d.query.pages) : [];
+  stranice.sort((a, b) => (a.index || 0) - (b.index || 0));
+  const odbaci = /logo|icon|flag|signature|stamp|coat of arms|seal of|banner|diagram|chart|map of|screenshot|\.svg|\.pdf|\.tif|\.gif/i;
+  const rezultat = [];
+  stranice.forEach(pg => {
+    const ii = pg.imageinfo && pg.imageinfo[0];
+    if (!ii || !ii.thumburl) return;
+    if (ii.mime !== 'image/jpeg' && ii.mime !== 'image/png') return;
+    if (odbaci.test(pg.title)) return;
+    if (ii.width < 400 || ii.height < 280) return;
+    const omjer = ii.width / ii.height;
+    if (omjer > 2.6 || omjer < 0.4) return;
+    const meta = ii.extmetadata || {};
+    const autor = ocistiHtmlUTekst(meta.Artist && meta.Artist.value).slice(0, 60);
+    const licenca = ocistiHtmlUTekst(meta.LicenseShortName && meta.LicenseShortName.value).slice(0, 30);
+    const opis = pg.title.replace(/^File:/i, '').replace(/\.[a-z0-9]+$/i, '').replace(/_/g, ' ').slice(0, 90);
+    rezultat.push({ pid: pg.pageid, url: ii.thumburl, stranica: ii.descriptionurl, opis, autor, licenca });
+  });
+  return rezultat;
+}
+
+function napraviFiguruSlike(c) {
+  const fig = document.createElement('figure');
+  fig.className = 'slika-lekcije';
+  fig.contentEditable = 'false';
+  fig.dataset.pid = c.pid;
+  const a = document.createElement('a');
+  a.href = c.stranica || c.url;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  const img = document.createElement('img');
+  img.src = c.url;
+  img.alt = c.opis;
+  img.referrerPolicy = 'no-referrer';
+  img.addEventListener('error', () => { fig.remove(); });
+  a.appendChild(img);
+  fig.appendChild(a);
+  const cap = document.createElement('figcaption');
+  const o = document.createElement('span');
+  o.className = 'opis';
+  o.textContent = c.opis;
+  const iz = document.createElement('span');
+  iz.className = 'izvor';
+  iz.textContent = [c.autor, c.licenca, 'Wikimedia Commons'].filter(Boolean).join(' · ');
+  cap.appendChild(o);
+  cap.appendChild(iz);
+  fig.appendChild(cap);
+  const kon = document.createElement('div');
+  kon.className = 'slika-kontrole';
+  kon.innerHTML = '<button type="button" data-akcija="zamijeni" title="Druga slika">🔄</button><button type="button" data-akcija="ukloni" title="Ukloni sliku">✕</button>';
+  fig.appendChild(kon);
+  return fig;
+}
+
+async function dodajSlikeULekciju(apiKey, raspon) {
+  const token = ++slikeToken;
+  const status = el('status');
+  const potrebno = raspon && raspon.max >= 750 ? 3 : 2;
+  status.className = '';
+  status.textContent = 'Lekcija je generisana. Tražim slike prema naslovu lekcije...';
+  try {
+    const p = ucitaniPodaci || {};
+    const pojmovi = await predloziPojmoveZaSlike(apiKey);
+    [p.jedinica, p.tema].forEach(x => { if (x && x.trim() && !pojmovi.includes(x.trim())) pojmovi.push(x.trim()); });
+    if (token !== slikeToken) return;
+
+    const poPojmu = [];
+    for (let i = 0; i < pojmovi.length && i < 6; i++) {
+      try { poPojmu.push(await traziCommonsSlike(pojmovi[i])); } catch (e) { poPojmu.push([]); }
+      if (token !== slikeToken) return;
+      const ukupno = poPojmu.reduce((z, l) => z + l.length, 0);
+      if (poPojmu.filter(l => l.length).length >= potrebno && ukupno >= potrebno * 4) break;
+    }
+
+    // izmjenično po pojmovima, bez duplikata (za raznolikost slika)
+    const pool = [];
+    const vidjeno = new Set();
+    for (let k = 0; k < 20; k++) {
+      poPojmu.forEach(l => {
+        if (l[k] && !vidjeno.has(l[k].pid)) { vidjeno.add(l[k].pid); pool.push(l[k]); }
+      });
+    }
+    slikePool = pool;
+
+    if (!pool.length) {
+      status.className = '';
+      status.textContent = 'Lekcija je uspješno generisana. Nisu pronađene prikladne slike za ovu temu.';
+      return;
+    }
+
+    const odabrane = pool.slice(0, potrebno);
+    const pasusi = Array.from(el('rezultat').querySelectorAll(':scope > p'));
+    const n = pasusi.length;
+    const pozicije = [];
+    if (n >= 1) {
+      // 1. slika iza uvodnog pasusa, ostale ravnomjerno kroz tekst
+      for (let i = 0; i < odabrane.length; i++) {
+        let idx = i === 0 ? 0 : Math.round((n - 1) * i / odabrane.length);
+        if (i > 0 && idx <= pozicije[i - 1]) idx = Math.min(n - 1, pozicije[i - 1] + 1);
+        pozicije.push(idx);
+      }
+    }
+    odabrane.forEach((c, i) => {
+      const fig = napraviFiguruSlike(c);
+      const ref = pasusi.length ? pasusi[Math.min(pozicije[i], n - 1)] : null;
+      if (ref) ref.insertAdjacentElement('afterend', fig);
+      else el('rezultat').insertBefore(fig, el('rezultat').firstChild);
+    });
+
+    status.className = 'ok';
+    status.textContent = 'Lekcija je uspješno generisana, dodane su slike (Wikimedia Commons). Provjeri da odgovaraju temi - preko slike možeš zamijeniti 🔄 ili ukloniti ✕.';
+  } catch (err) {
+    status.className = '';
+    status.textContent = 'Lekcija je generisana, ali slike nisu dodane: ' + err.message;
+  }
+}
+
+el('rezultat').addEventListener('click', (e) => {
+  const btn = e.target.closest && e.target.closest('.slika-kontrole button');
+  if (!btn) return;
+  const fig = btn.closest('figure.slika-lekcije');
+  if (!fig) return;
+  if (btn.dataset.akcija === 'ukloni') { fig.remove(); return; }
+  if (btn.dataset.akcija === 'zamijeni') {
+    const prikazani = new Set(Array.from(el('rezultat').querySelectorAll('figure.slika-lekcije')).map(f => f.dataset.pid));
+    const trenutni = slikePool.findIndex(c => String(c.pid) === String(fig.dataset.pid));
+    let nova = null;
+    for (let k = 1; k <= slikePool.length; k++) {
+      const c = slikePool[(trenutni + k + slikePool.length) % slikePool.length];
+      if (!prikazani.has(String(c.pid))) { nova = c; break; }
+    }
+    if (!nova) {
+      el('status').className = '';
+      el('status').textContent = 'Nema više drugih pronađenih slika za zamjenu.';
+      return;
+    }
+    fig.replaceWith(napraviFiguruSlike(nova));
+  }
+});
+
+// ---- Slike u Word izvozu ----
+async function pripremiSlikeZaDocx() {
+  const mapa = new Map();
+  const figure = Array.from(el('rezultat').querySelectorAll('figure.slika-lekcije'));
+  let brojac = 0;
+  for (const fig of figure) {
+    const img = fig.querySelector('img');
+    if (!img) continue;
+    try {
+      const r = await fetch(img.src);
+      if (!r.ok) continue;
+      const blob = await r.blob();
+      const ext = /png/i.test(blob.type) ? 'png' : 'jpeg';
+      const bm = await createImageBitmap(blob);
+      const buf = await blob.arrayBuffer();
+      brojac++;
+      mapa.set(fig, { buf, fajl: 'slika' + brojac + '.' + ext, rId: 'rIdSl' + brojac, w: bm.width, h: bm.height, n: brojac });
+    } catch (e) { /* slika se preskače u Wordu ako se ne može preuzeti */ }
+  }
+  return mapa;
+}
+
+function slikaParagrafXml(fig) {
+  const info = _docxSlikeMapa.get(fig);
+  if (!info) return '';
+  const s = Math.min(3240000 / info.w, 2340000 / info.h);
+  const cx = Math.round(info.w * s), cy = Math.round(info.h * s);
+  const opis = fig.querySelector('.opis') ? fig.querySelector('.opis').textContent : '';
+  const izvor = fig.querySelector('.izvor') ? fig.querySelector('.izvor').textContent : '';
+  const drawing = '<w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="' + cx + '" cy="' + cy + '"/>' +
+    '<wp:docPr id="' + (100 + info.n) + '" name="Slika ' + info.n + '" descr="' + xmlEscape(opis) + '"/>' +
+    '<wp:cNvGraphicFramePr><a:graphicFrameLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"/></wp:cNvGraphicFramePr>' +
+    '<a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">' +
+    '<pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="' + info.n + '" name="' + info.fajl + '"/><pic:cNvPicPr/></pic:nvPicPr>' +
+    '<pic:blipFill><a:blip r:embed="' + info.rId + '"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>' +
+    '<pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="' + cx + '" cy="' + cy + '"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic>' +
+    '</a:graphicData></a:graphic></wp:inline></w:drawing>';
+  let xml = '<w:p><w:pPr><w:keepNext/><w:spacing w:before="120" w:after="40"/><w:jc w:val="center"/></w:pPr><w:r>' + drawing + '</w:r></w:p>';
+  const podnatpis = [opis, izvor].filter(Boolean).join(' - ');
+  if (podnatpis) {
+    xml += '<w:p><w:pPr><w:pStyle w:val="Ident"/><w:spacing w:before="0" w:after="200"/></w:pPr><w:r><w:t xml:space="preserve">' + xmlEscape(podnatpis) + '</w:t></w:r></w:p>';
+  }
+  return xml;
+}
+
+
+// ---------- Ručno uređivanje teksta lekcije ----------
+function azurirajBrojRijeci() {
+  const raspon = rasponRijeciZaRazred(ucitaniPodaci && ucitaniPodaci.razred);
+  const brojac = prebrojRijeci(tekstLekcijeBezSlika());
+  el('brojRijeci').textContent = 'Broj riječi u tekstu lekcije (bez ključnih pojmova): otprilike ' + brojac + ' (ciljani raspon za ovaj razred: ' + raspon.min + '-' + raspon.max + ').';
+}
+
+// Sređuje strukturu nakon ručnih izmjena: goli tekst na vrhu postaje <p>, prazni pasusi se brišu.
+function normalizirajRezultat() {
+  const kont = el('rezultat');
+  Array.from(kont.childNodes).forEach(n => {
+    if (n.nodeType === Node.TEXT_NODE && n.textContent.trim()) {
+      const p = document.createElement('p');
+      n.replaceWith(p);
+      p.appendChild(n);
+    } else if (n.nodeType === Node.ELEMENT_NODE) {
+      const tag = n.tagName.toLowerCase();
+      if ((tag === 'p' || tag === 'div') && !n.textContent.trim() && !n.querySelector('img, figure')) n.remove();
+    }
+  });
+}
+
+function ugasiUredjivanje(sakrijDugme) {
+  const r = el('rezultat');
+  r.removeAttribute('contenteditable');
+  r.classList.remove('uredjivanje');
+  const b = el('uredi');
+  if (b) {
+    b.classList.remove('aktivno');
+    b.innerHTML = '✏️ Uredi';
+    if (sakrijDugme) b.style.display = 'none';
+  }
+}
+
+function prebaciUredjivanje() {
+  const r = el('rezultat');
+  const status = el('status');
+  if (r.getAttribute('contenteditable') === 'true') {
+    normalizirajRezultat();
+    ugasiUredjivanje(false);
+    azurirajBrojRijeci();
+    status.className = 'ok';
+    status.textContent = 'Uređivanje je završeno. Izmjene će biti u Wordu, PDF-u, na Google Drive-u i u Provjeri znanja.';
+    return;
+  }
+  r.setAttribute('contenteditable', 'true');
+  r.classList.add('uredjivanje');
+  try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch (e) {}
+  const b = el('uredi');
+  b.classList.add('aktivno');
+  b.innerHTML = '✔ Završi uređivanje';
+  status.className = '';
+  status.textContent = 'Uređivanje je uključeno: klikni u tekst i ispravi što treba. Ctrl+B podebljava, Ctrl+I kurziv, Ctrl+Z poništava. Slike se ne mogu uređivati (koristi 🔄 i ✕ na slici).';
+  r.focus();
+}
+
+el('rezultat').addEventListener('input', () => {
+  if (el('rezultat').getAttribute('contenteditable') === 'true') azurirajBrojRijeci();
+});
+
+// Zalijepljeni tekst uvijek ide kao običan tekst (bez tuđeg formatiranja)
+el('rezultat').addEventListener('paste', (e) => {
+  if (el('rezultat').getAttribute('contenteditable') !== 'true') return;
+  e.preventDefault();
+  const t = (e.clipboardData || window.clipboardData).getData('text/plain');
+  document.execCommand('insertText', false, t);
 });
 
 // ---------- Sigurnosna mreža: pasusi, podebljani pojmovi i kurziv ----------
