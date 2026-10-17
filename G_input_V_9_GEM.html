@@ -257,6 +257,19 @@
     .dugmad button { width: 100%; }
     #rezultat { padding: 22px 20px; }
   }
+
+  /* ---- Ručno uređivanje teksta ---- */
+  #uredi { background: #e8edf5; color: var(--plava); display: none; }
+  #uredi:hover { background: #d5deec; box-shadow: 0 3px 10px rgba(30, 77, 139, 0.14); }
+  #uredi.aktivno { background: #fff3cd; color: #7a5b00; box-shadow: 0 0 0 2px #f0d38a; }
+  #rezultat.uredjivanje {
+    outline: 2px dashed var(--plava-svijetla);
+    outline-offset: 4px;
+    background: #fffef7;
+    cursor: text;
+  }
+  #rezultat.uredjivanje:focus { outline: 2px dashed var(--plava); }
+  @media print { #rezultat.uredjivanje { outline: none !important; background: #fff !important; } }
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -307,6 +320,7 @@
 
   <div class="dugmad">
     <button id="generisi" onclick="generisiInput()" disabled>🌀 Generiši</button>
+    <button id="uredi" onclick="prebaciUredjivanje()" title="Uključi/isključi ručno uređivanje teksta">✏️ Uredi</button>
     <button id="izvezWord" onclick="izvezUWord()">💾 Word</button>
     <button id="izvezi" onclick="window.print()">📤 PDF</button>
     <button id="sacuvajDrive" onclick="sacuvajNaDrive()" style="display:none; background:#e8edf5; color:var(--plava);">☁️ Google Drive</button>
@@ -660,6 +674,7 @@ async function generisiInput() {
   status.className = '';
   status.textContent = '';
   el('izvezWord').style.display = 'none';
+  ugasiUredjivanje(true);
   el('izvezi').style.display = 'none';
   el('sacuvajDrive').style.display = 'none';
   el('rezultat-wrap').style.display = 'none';
@@ -705,6 +720,7 @@ async function generisiInput() {
     el('rezultat').innerHTML = sadrzaj;
     el('rezultat-wrap').style.display = 'block';
     el('izvezWord').style.display = 'inline-block';
+    el('uredi').style.display = 'inline-block';
     el('izvezi').style.display = 'inline-block';
     el('sacuvajDrive').style.display = 'inline-block';
     el('obrisi').style.display = 'inline-block';
@@ -728,6 +744,7 @@ function obrisiSve() {
   el('rezultat').innerHTML = '';
   el('rezultat-wrap').style.display = 'none';
   el('izvezWord').style.display = 'none';
+  ugasiUredjivanje(true);
   el('izvezi').style.display = 'none';
   el('sacuvajDrive').style.display = 'none';
   el('obrisi').style.display = 'none';
@@ -869,6 +886,7 @@ async function generisiDocxBlob() {
     throw new Error('Biblioteka za izvoz u Word nije učitana (provjeri internet konekciju).');
   }
 
+  normalizirajRezultat();
   const tijeloXml = htmlUDocxTijelo(el('rezultat'));
 
   const documentXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
@@ -1167,6 +1185,64 @@ function identParagrafXml() {
 window.addEventListener('beforeprint', () => {
   const r = document.getElementById('identRed');
   if (r) r.textContent = identTekst();
+});
+
+// ---------- Ručno uređivanje teksta ----------
+// Sređuje strukturu nakon ručnih izmjena: goli tekst na vrhu postaje <p>, prazni pasusi se brišu.
+function normalizirajRezultat() {
+  const kont = el('rezultat');
+  Array.from(kont.childNodes).forEach(n => {
+    if (n.nodeType === Node.TEXT_NODE && n.textContent.trim()) {
+      const p = document.createElement('p');
+      n.replaceWith(p);
+      p.appendChild(n);
+    } else if (n.nodeType === Node.ELEMENT_NODE) {
+      const tag = n.tagName.toLowerCase();
+      const praznoBezKlase = (tag === 'p' || tag === 'div') && !n.className && !n.textContent.trim() && !n.querySelector(':scope > :not(br)');
+      if (praznoBezKlase) n.remove();
+    }
+  });
+}
+
+function ugasiUredjivanje(sakrijDugme) {
+  const r = el('rezultat');
+  r.removeAttribute('contenteditable');
+  r.classList.remove('uredjivanje');
+  const b = el('uredi');
+  if (b) {
+    b.classList.remove('aktivno');
+    b.innerHTML = '✏️ Uredi';
+    if (sakrijDugme) b.style.display = 'none';
+  }
+}
+
+function prebaciUredjivanje() {
+  const r = el('rezultat');
+  const status = el('status');
+  if (r.getAttribute('contenteditable') === 'true') {
+    normalizirajRezultat();
+    ugasiUredjivanje(false);
+    status.className = 'ok';
+    status.textContent = 'Uređivanje je završeno. Izmjene će biti u Wordu, PDF-u i na Google Drive-u.';
+    return;
+  }
+  r.setAttribute('contenteditable', 'true');
+  r.classList.add('uredjivanje');
+  try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch (e) {}
+  const b = el('uredi');
+  b.classList.add('aktivno');
+  b.innerHTML = '✔ Završi uređivanje';
+  status.className = '';
+  status.textContent = 'Uređivanje je uključeno: klikni u tekst i ispravi što treba. Ctrl+B podebljava, Ctrl+I kurziv, Ctrl+Z poništava.';
+  r.focus();
+}
+
+// Zalijepljeni tekst uvijek ide kao običan tekst (bez tuđeg formatiranja)
+el('rezultat').addEventListener('paste', (e) => {
+  if (el('rezultat').getAttribute('contenteditable') !== 'true') return;
+  e.preventDefault();
+  const t = (e.clipboardData || window.clipboardData).getData('text/plain');
+  document.execCommand('insertText', false, t);
 });
 </script>
 </body>
