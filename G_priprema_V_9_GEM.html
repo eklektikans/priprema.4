@@ -401,8 +401,9 @@
         </div>
       </div>
       <div>
-        <label for="datumRealizacije">📅 Datum realizacije časa</label>
+        <label for="datumRealizacije">📅 Sedmica realizacije</label>
         <input type="date" id="datumRealizacije">
+        <div id="periodPrikaz" style="margin-top:6px;font-size:0.9em;font-weight:600;"></div>
       </div>
     </div>
   </div>
@@ -480,7 +481,28 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const danas = new Date().toISOString().split('T')[0];
   el('datumRealizacije').value = danas;
+  el('datumRealizacije').addEventListener('change', osvjeziPeriod);
+  osvjeziPeriod();
 });
+
+// Vraća period sedmice (ponedjeljak - petak) za odabrani datum (YYYY-MM-DD)
+function periodSedmice(iso) {
+  let d = new Date();
+  if (iso) {
+    const p = iso.split('-').map(Number);
+    d = new Date(p[0], p[1] - 1, p[2]);
+  }
+  const dan = d.getDay() === 0 ? 7 : d.getDay(); // ned = 7
+  const pon = new Date(d.getFullYear(), d.getMonth(), d.getDate() - (dan - 1));
+  const pet = new Date(pon.getFullYear(), pon.getMonth(), pon.getDate() + 4);
+  const f = x => String(x.getDate()).padStart(2, '0') + '.' + String(x.getMonth() + 1).padStart(2, '0') + '.' + x.getFullYear() + '.';
+  return f(pon) + ' - ' + f(pet);
+}
+
+function osvjeziPeriod() {
+  const o = el('periodPrikaz');
+  if (o) o.textContent = 'Period: ' + periodSedmice(el('datumRealizacije').value);
+}
 
 function danasnjiDatum() {
   const d = new Date();
@@ -562,7 +584,7 @@ Očekivani rezultat: [konkretno]`;
 
 VAŽNO - DOSLOVNO PREPISIVANJE LABELA (obavezno): Sve podnaslove i labele iz urneka prepiši DOSLOVNO, uključujući tekst u zagradi (npr. "Kognitivni ishodi (Razmišljanje i znanje):", "Psihomotorički ishodi (Rad i vještine):", "Afektivni ishodi (Osjećanja i stavovi):") i fiksne uvodne rečenice (npr. "Na kraju časa učenik/učenica će biti u stanju da:"). Ne skraćuj, ne preformulisuj i ne izostavljaj ih. Samo sadržaj u uglastim zagradama [ ] zamijeni konkretnim tekstom.
 
-VAŽNO - SEKCIJA IX (obavezno): OBAVEZNO popuni SVE stavke ove sekcije: Formativno vrednovanje sa stavkama "Metode i tehnike" i "Povratna informacija", te Sumativno vrednovanje sa stavkama "Metode" i "Kriteriji ocjenjivanja". Stavka "Kriteriji ocjenjivanja" mora sadržavati najmanje 3 konkretna, mjerljiva kriterija (npr. po nivoima: izvrstan, vrlo dobar, dobar, dovoljan). Nijednu stavku ne smiješ izostaviti niti ostaviti praznom. Naslov sekcije u izlazu piši kao "IX - VREDNOVANJE".
+VAŽNO - GLAGOLI U ISHODIMA (obavezno, bez izuzetka): U sekciji IV - ISHODI UČENJA svaki ishod mora počinjati glagolom koji je NAVEDEN u listi za tu kategoriju, doslovno u tom obliku (3. lice jednine). Glagoli iz liste jedne kategorije NE smiju se koristiti u drugoj kategoriji (npr. "analizira", "definiše", "objašnjava" smiju stajati samo u kognitivnim ishodima, nikad u psihomotoričkim ili afektivnim). Ne koristi nijedan glagol koji nije na listi, ni sinonime ni slične glagole (npr. "raspravlja", "argumentuje", "upoređuje", "zaključuje", "istražuje", "piše", "debatuje"). Ako ti se čini da bi neki drugi glagol bolje pristajao, izaberi najbliži glagol sa liste i prilagodi sadržaj rečenice (objekat ishoda), a ne glagol. Prije slanja odgovora provjeri svaki ishod u sekciji IV i zamijeni svaki glagol koji nije na listi svoje kategorije.\n\nVAŽNO - SEKCIJA IX (obavezno): OBAVEZNO popuni SVE stavke ove sekcije: Formativno vrednovanje sa stavkama "Metode i tehnike" i "Povratna informacija", te Sumativno vrednovanje sa stavkama "Metode" i "Kriteriji ocjenjivanja". Stavka "Kriteriji ocjenjivanja" mora sadržavati najmanje 3 konkretna, mjerljiva kriterija (npr. po nivoima: izvrstan, vrlo dobar, dobar, dovoljan). Nijednu stavku ne smiješ izostaviti niti ostaviti praznom. Naslov sekcije u izlazu piši kao "IX - VREDNOVANJE".
 
 VAŽNO - JEZIK (obavezno, bez izuzetka): Cijeli tekst piši isključivo ijekavskim izgovorom (npr. "lijep", "dijete", "mlijeko", "vrijeme", "razumjeti", "cjelina", "rijetko" - NIKAD ekavskim oblicima poput "lep", "dete", "mleko", "vreme", "razumeti", "celina", "retko"). Ovo pravilo važi za svaku riječ i svaku sekciju pripreme.
 
@@ -579,7 +601,7 @@ Razred i odjeljenje: [popuni prema unosu]
 Nastavna tema: [popuni]
 Nastavna jedinica: [popuni]
 Tip časa: [popuni]
-Datum izrade: [danasnji datum]     Datum realizacije: [obavezno upiši tačno onu vrijednost koja je proslijeđena kao "Datum realizacije" u podacima korisnika ispod - NIKAD ne ostavljaj prazno niti piši placeholder]
+Datum izrade: [danasnji datum]     Period realizacije: [obavezno upiši tačno onu vrijednost koja je proslijeđena kao "Period realizacije" u podacima korisnika ispod - NIKAD ne ostavljaj prazno niti piši placeholder]
 Lokacija časa: Učionica 18.     Trajanje: [popuni prema unosu]
 
 II - LITERATURA
@@ -597,9 +619,9 @@ VAŽNO: Kad god se u korelaciji ili bilo gdje drugo u pripremi spominje maternji
 
 IV - ISHODI UČENJA
 Na kraju časa učenik/učenica će biti u stanju da:
-Kognitivni ishodi (Razmišljanje i znanje): [konkretno, koristeći glagole: razumije, definiše, razlikuje, analizira, objašnjava, navodi, interpretira, kritikuje]
-Psihomotorički ishodi (Rad i vještine): [konkretno, koristeći glagole: konstruiše, izvodi, prezentuje, crta, primjenjuje, demonstrira]
-Afektivni ishodi (Osjećanja i stavovi): [konkretno, koristeći: prepoznaje vrijednost, uvažava, razvija stav, pokazuje odgovornost, pomaže, prihvata, podržava, cijeni]
+Kognitivni ishodi (Razmišljanje i znanje): [konkretno, ISKLJUČIVO glagolima iz ove liste: definiše, razlikuje, analizira, objašnjava, navodi, interpretira, kritikuje, diskutuje]
+Psihomotorički ishodi (Rad i vještine): [konkretno, ISKLJUČIVO glagolima iz ove liste: konstruiše, izvodi, prezentuje, crta, primjenjuje, demonstrira, razvrstava, simulira, igra ulogu, uređuje]
+Afektivni ishodi (Osjećanja i stavovi): [konkretno, ISKLJUČIVO glagolima iz ove liste: prepoznaje vrijednost, uvažava, razvija stav, pokazuje odgovornost, pomaže, prihvata, podržava, cijeni]
 
 V - KRITERIJI USPJEHA
 Učenik je ostvario ishode ako može: [numerisana lista, 3-5 konkretnih, mjerljivih kriterija]
@@ -663,7 +685,7 @@ function korisnickiPrompt() {
   const tipCasa = el('tipCasa').value;
   const nastava = document.querySelector('input[name=nastava]:checked').value;
   const trajanje = document.querySelector('input[name=trajanje]:checked').value;
-  const datumRealizacije = el('datumRealizacije').value || danasnjiDatum();
+  const datumRealizacije = periodSedmice(el('datumRealizacije').value);
 
   const uputstvoTip = UPUTSTVA_PO_TIPU_CASA[tipCasa]
     ? `\n\nOBAVEZNO UPUTSTVO ZA TOK ČASA (sekcija VII) PREMA IZABRANOM TIPU ČASA "${tipCasa}":\n${UPUTSTVA_PO_TIPU_CASA[tipCasa]}`
@@ -689,7 +711,7 @@ Tip časa: ${tipCasa}
 Nastava: ${nastava}
 Trajanje: ${trajanje}
 Datum izrade: ${danasnjiDatum()}
-Datum realizacije: ${datumRealizacije}${uputstvoTip}${napomeneTekst}`;
+Period realizacije: ${datumRealizacije}${uputstvoTip}${napomeneTekst}`;
 }
 
 let razgovor = [];
@@ -1658,7 +1680,7 @@ function izgradiPodatkeZaNivoe() {
     jedinica: (el('jedinica') && el('jedinica').value || '').trim(),
     tipCasa: (el('tipCasa') && el('tipCasa').value || '').trim(),
     datumIzrade: danasnjiDatum(),
-    datumRealizacije: (el('datumRealizacije') && el('datumRealizacije').value || '').trim(),
+    datumRealizacije: periodSedmice(el('datumRealizacije') && el('datumRealizacije').value),
     vrijemeIzrade: Date.now(),
     sadrzajHtml: el('rezultat').innerHTML,
     sadrzajTekst: el('rezultat').innerText
