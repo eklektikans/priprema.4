@@ -6,18 +6,18 @@
 <title>Lekcija za učenike V.16</title>
 <style>
   :root {
-    --plava: #1e4d8b;
-    --plava-tamna: #163a68;
-    --plava-svijetla: #2f6bb5;
-    --siva: #eef1f6;
-    --border: #dbe2ea;
+    --plava: #1b5e3b;
+    --plava-tamna: #134428;
+    --plava-svijetla: #2e8b57;
+    --siva: #eaf2ec;
+    --border: #d3e2d8;
     --zelena: #157a3d;
   }
   * { box-sizing: border-box; }
   body {
     font-family: 'Segoe UI', Arial, sans-serif;
     background: var(--siva);
-    background-image: radial-gradient(circle at 15% 0%, #e4ecf9 0%, var(--siva) 45%);
+    background-image: radial-gradient(circle at 15% 0%, #dcebe1 0%, var(--siva) 45%);
     margin: 0;
     padding: 24px;
     color: #222;
@@ -33,6 +33,12 @@
     margin-bottom: 4px;
     letter-spacing: 0.2px;
   }
+  .verzija-oznaka {
+    display: inline-block; vertical-align: middle; margin-left: 10px;
+    padding: 3px 12px; border-radius: 999px; font-size: 14px; font-weight: 700;
+    letter-spacing: 0.5px; color: #fff; -webkit-text-fill-color: #fff;
+    background: linear-gradient(135deg, #1b5e3b 0%, #2e8b57 100%);
+  }
   .podnaslov { color: #667; margin-bottom: 26px; font-size: 14px; }
 
   .panel {
@@ -41,11 +47,11 @@
     border-radius: 14px;
     padding: 22px 26px;
     margin-bottom: 22px;
-    box-shadow: 0 2px 6px rgba(30, 77, 139, 0.06), 0 8px 24px rgba(30, 77, 139, 0.05);
+    box-shadow: 0 2px 6px rgba(27, 94, 59, 0.06), 0 8px 24px rgba(27, 94, 59, 0.05);
     transition: box-shadow 0.2s ease;
   }
   .panel:hover {
-    box-shadow: 0 2px 8px rgba(30, 77, 139, 0.08), 0 10px 28px rgba(30, 77, 139, 0.08);
+    box-shadow: 0 2px 8px rgba(27, 94, 59, 0.08), 0 10px 28px rgba(27, 94, 59, 0.08);
   }
   .panel h2 {
     font-size: 15px;
@@ -72,7 +78,7 @@
     border-radius: 8px;
     font-size: 14px;
     font-family: inherit;
-    background: #fbfcfe;
+    background: #fafdfb;
     transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
   }
   input[type=text]:hover, input[type=password]:hover, select:hover {
@@ -82,12 +88,12 @@
     outline: none;
     border-color: var(--plava);
     background: #fff;
-    box-shadow: 0 0 0 3px rgba(30, 77, 139, 0.12);
+    box-shadow: 0 0 0 3px rgba(27, 94, 59, 0.12);
   }
   .napomena { font-size: 12px; color: #778; margin-top: 6px; }
 
   .info-box {
-    background: #f5f9fe;
+    background: #f1f9f4;
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 14px 16px;
@@ -114,14 +120,14 @@
   #generisi {
     background: linear-gradient(135deg, var(--plava) 0%, var(--plava-svijetla) 100%);
     color: #fff;
-    box-shadow: 0 4px 12px rgba(30, 77, 139, 0.28);
+    box-shadow: 0 4px 12px rgba(27, 94, 59, 0.28);
   }
-  #generisi:hover { box-shadow: 0 6px 16px rgba(30, 77, 139, 0.36); }
-  #izvezWord, #izvezi { background: #e8edf5; color: var(--plava); display: none; }
-  #izvezWord:hover, #izvezi:hover { background: #d5deec; box-shadow: 0 3px 10px rgba(30, 77, 139, 0.14); }
-  #izvezProvjera { background: #e8edf5; color: var(--plava); display: none; }
-  #izvezProvjera:hover { background: #d5deec; }
-  #obrisi { display:none; background:linear-gradient(135deg, #2f6bb5 0%, #1e4d8b 100%); color:#fff; }
+  #generisi:hover { box-shadow: 0 6px 16px rgba(27, 94, 59, 0.36); }
+  #izvezWord, #izvezi { background: #e2efe6; color: var(--plava); display: none; }
+  #izvezWord:hover, #izvezi:hover { background: #cde2d5; box-shadow: 0 3px 10px rgba(27, 94, 59, 0.14); }
+  #izvezProvjera { background: #e2efe6; color: var(--plava); display: none; }
+  #izvezProvjera:hover { background: #cde2d5; }
+  #obrisi { display:none; background:linear-gradient(135deg, #2e8b57 0%, #1b5e3b 100%); color:#fff; }
   button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
   #status { margin-top: 12px; font-size: 13px; font-weight: 600; }
@@ -180,7 +186,7 @@
     padding: 36px 46px;
     line-height: 1.75;
     font-size: 15px;
-    box-shadow: 0 2px 6px rgba(30, 77, 139, 0.06), 0 8px 24px rgba(30, 77, 139, 0.05);
+    box-shadow: 0 2px 6px rgba(27, 94, 59, 0.06), 0 8px 24px rgba(27, 94, 59, 0.05);
   }
   #rezultat p { margin: 0 0 14px 0; text-align: justify; }
   #rezultat h3 {
@@ -232,7 +238,7 @@
     .naslov-pripreme {
       display: block !important;
       text-align: center; font-weight: 700; font-size: 12pt; letter-spacing: 2.5px;
-      color: #fff; background: var(--plava);
+      color: #fff; background: #1e4d8b;
       padding: 10px 0; margin: 0 0 10px 0;
     }
 
@@ -247,14 +253,14 @@
     }
     #rezultat h2 {
       font-size: 10pt; letter-spacing: .6px; color: #14305a;
-      background: #eef2f8; border: none; border-left: 4px solid var(--plava); border-radius: 0;
+      background: #eef2f8; border: none; border-left: 4px solid #1e4d8b; border-radius: 0;
       margin: 13px 0 6px; padding: 3px 8px;
       break-after: avoid;
     }
     #rezultat h2:first-child { margin-top: 0; }
     #rezultat h3 {
-      font-size: 10pt; color: var(--plava);
-      margin: 9px 0 3px; padding: 0 0 1px; border: none; border-bottom: 1px dotted var(--plava);
+      font-size: 10pt; color: #1e4d8b;
+      margin: 9px 0 3px; padding: 0 0 1px; border: none; border-bottom: 1px dotted #1e4d8b;
       break-after: avoid;
     }
     #rezultat p { margin: 0 0 4px; text-align: left; }
@@ -299,7 +305,7 @@
     height: auto;
     border-radius: 8px;
     border: 1px solid var(--border);
-    box-shadow: 0 2px 8px rgba(30, 77, 139, 0.12);
+    box-shadow: 0 2px 8px rgba(27, 94, 59, 0.12);
   }
   figure.slika-lekcije figcaption { margin-top: 6px; font-size: 12.5px; line-height: 1.35; color: #556; }
   figure.slika-lekcije figcaption .izvor { display: block; font-size: 10.5px; color: #99a; margin-top: 2px; }
@@ -309,8 +315,8 @@
   @media print { .slika-kontrole { display: none !important; } }
 
   /* ---- Ručno uređivanje teksta ---- */
-  #uredi { background: #e8edf5; color: var(--plava); display: none; }
-  #uredi:hover { background: #d5deec; box-shadow: 0 3px 10px rgba(30, 77, 139, 0.14); }
+  #uredi { background: #e2efe6; color: var(--plava); display: none; }
+  #uredi:hover { background: #cde2d5; box-shadow: 0 3px 10px rgba(27, 94, 59, 0.14); }
   #uredi.aktivno { background: #fff3cd; color: #7a5b00; box-shadow: 0 0 0 2px #f0d38a; }
   #rezultat.uredjivanje {
     outline: 2px dashed var(--plava-svijetla);
@@ -327,7 +333,7 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>Lekcija za učenike</h1>
+  <h1>Lekcija za učenike <span class="verzija-oznaka">V.16</span></h1>
   <div class="podnaslov">Iz pripreme za nastavni čas se piše tekst za učenike. Dužina se automatski prilagođava razredu i uzrastu učenika (I-IV). Koristi se platformu Groq AI ili Google Gemini.</div>
 
   <div class="panel">
@@ -374,10 +380,10 @@
     <button id="uredi" onclick="prebaciUredjivanje()" title="Uključi/isključi ručno uređivanje teksta lekcije">✏️ Uredi</button>
     <button id="izvezWord" onclick="izvezUWord()">💾 Word</button>
     <button id="izvezi" onclick="window.print()">📤 PDF</button>
-    <button id="sacuvajDrive" onclick="sacuvajNaDrive()" style="display:none; background:#e8edf5; color:var(--plava);">☁️ Google Drive</button>
+    <button id="sacuvajDrive" onclick="sacuvajNaDrive()" style="display:none; background:#e2efe6; color:var(--plava);">☁️ Google Drive</button>
     <button id="izvezProvjera" onclick="otvoriProvjeru()">🎯 Provjera znanja</button>
     <button id="provjeraCinjenica" onclick="provjeriCinjenice()" style="display:none;">🔍 Provjeri</button>
-    <button id="izvezJson" onclick="izvezJsonRezerva()" style="display:none; background:#eef1f6; color:#556;">💾 JSON</button>
+    <button id="izvezJson" onclick="izvezJsonRezerva()" style="display:none; background:#eaf2ec; color:#556;">💾 JSON</button>
     <button id="obrisi" onclick="obrisiSve()">🆕 Nova</button>
   </div>
   <div id="status"></div>
