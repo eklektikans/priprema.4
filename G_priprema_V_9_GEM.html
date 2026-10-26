@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Priprema za nastavni čas V.14.1</title>
+<title>Priprema za nastavni čas V.16</title>
 <style>
   :root {
-    --plava: #1e4d8b;
-    --plava-tamna: #163a68;
-    --plava-svijetla: #2f6bb5;
-    --siva: #eef1f6;
-    --border: #dbe2ea;
+    --plava: #1b5e3b;
+    --plava-tamna: #134428;
+    --plava-svijetla: #2e8b57;
+    --siva: #eaf2ec;
+    --border: #d3e2d8;
   }
   * { box-sizing: border-box; }
   body {
     font-family: 'Segoe UI', Arial, sans-serif;
     background: var(--siva);
-    background-image: radial-gradient(circle at 15% 0%, #e4ecf9 0%, var(--siva) 45%);
+    background-image: radial-gradient(circle at 15% 0%, #dcebe1 0%, var(--siva) 45%);
     margin: 0;
     padding: 24px;
     color: #222;
@@ -32,6 +32,12 @@
     margin-bottom: 4px;
     letter-spacing: 0.2px;
   }
+  .verzija-oznaka {
+    display: inline-block; vertical-align: middle; margin-left: 10px;
+    padding: 3px 12px; border-radius: 999px; font-size: 14px; font-weight: 700;
+    letter-spacing: 0.5px; color: #fff; -webkit-text-fill-color: #fff;
+    background: linear-gradient(135deg, #1b5e3b 0%, #2e8b57 100%);
+  }
   .podnaslov { color: #667; margin-bottom: 26px; font-size: 14px; }
 
   .panel {
@@ -40,11 +46,11 @@
     border-radius: 14px;
     padding: 22px 26px;
     margin-bottom: 22px;
-    box-shadow: 0 2px 6px rgba(30, 77, 139, 0.06), 0 8px 24px rgba(30, 77, 139, 0.05);
+    box-shadow: 0 2px 6px rgba(27, 94, 59, 0.06), 0 8px 24px rgba(27, 94, 59, 0.05);
     transition: box-shadow 0.2s ease;
   }
   .panel:hover {
-    box-shadow: 0 2px 8px rgba(30, 77, 139, 0.08), 0 10px 28px rgba(30, 77, 139, 0.08);
+    box-shadow: 0 2px 8px rgba(27, 94, 59, 0.08), 0 10px 28px rgba(27, 94, 59, 0.08);
   }
   .panel h2 {
     font-size: 15px;
@@ -71,7 +77,7 @@
     border-radius: 8px;
     font-size: 14px;
     font-family: inherit;
-    background: #fbfcfe;
+    background: #fafdfb;
     transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
   }
   input[type=text]:hover, input[type=password]:hover, input[type=date]:hover, select:hover {
@@ -81,7 +87,7 @@
     outline: none;
     border-color: var(--plava);
     background: #fff;
-    box-shadow: 0 0 0 3px rgba(30, 77, 139, 0.12);
+    box-shadow: 0 0 0 3px rgba(27, 94, 59, 0.12);
   }
   .red2 { display: flex; gap: 16px; }
   .red2 > div { flex: 1; }
@@ -94,7 +100,7 @@
     cursor: pointer;
     transition: border-color 0.15s ease, background 0.15s ease;
   }
-  .radio-grupa label:hover { border-color: var(--plava-svijetla); background: #f5f9fe; }
+  .radio-grupa label:hover { border-color: var(--plava-svijetla); background: #f1f9f4; }
 
   .dugmad { display: flex; gap: 6px; margin-top: 22px; flex-wrap: wrap; }
   button {
@@ -112,14 +118,14 @@
   #generisi {
     background: linear-gradient(135deg, var(--plava) 0%, var(--plava-svijetla) 100%);
     color: #fff;
-    box-shadow: 0 4px 12px rgba(30, 77, 139, 0.28);
+    box-shadow: 0 4px 12px rgba(27, 94, 59, 0.28);
   }
-  #generisi:hover { box-shadow: 0 6px 16px rgba(30, 77, 139, 0.36); }
-  #izvezWord, #izvezi { background: #e8edf5; color: var(--plava); display: none; }
-  #izvezWord:hover, #izvezi:hover { background: #d5deec; box-shadow: 0 3px 10px rgba(30, 77, 139, 0.14); }
+  #generisi:hover { box-shadow: 0 6px 16px rgba(27, 94, 59, 0.36); }
+  #izvezWord, #izvezi { background: #e2efe6; color: var(--plava); display: none; }
+  #izvezWord:hover, #izvezi:hover { background: #cde2d5; box-shadow: 0 3px 10px rgba(27, 94, 59, 0.14); }
   button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-  #pitajAI { background: #1a73e8; color: #fff; }
-  #pitajAI:hover { background: #1557b0; box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3); }
+  #pitajAI { background: #2e8b57; color: #fff; }
+  #pitajAI:hover { background: #1b5e3b; box-shadow: 0 4px 12px rgba(46, 139, 87, 0.3); }
 
   .napomena {
     font-size: 12px;
@@ -183,7 +189,7 @@
     padding: 32px 42px;
     line-height: 1.55;
     font-size: 14.5px;
-    box-shadow: 0 2px 6px rgba(30, 77, 139, 0.06), 0 8px 24px rgba(30, 77, 139, 0.05);
+    box-shadow: 0 2px 6px rgba(27, 94, 59, 0.06), 0 8px 24px rgba(27, 94, 59, 0.05);
   }
   #rezultat h2 {
     color: var(--plava);
@@ -221,8 +227,10 @@
     @page {
       size: A4;
       margin: 17mm 18mm 20mm 18mm;
-      @bottom-center {
+      @bottom-right {
         content: counter(page);
+        width: 18mm;
+        text-align: right;
         font: 9pt 'Segoe UI', Carlito, 'Liberation Sans', Arial, sans-serif;
         color: #555;
       }
@@ -240,7 +248,7 @@
     .naslov-pripreme {
       display: block !important;
       text-align: center; font-weight: 700; font-size: 16pt; letter-spacing: 2.5px;
-      color: #fff; background: var(--plava);
+      color: #fff; background: #1e4d8b;
       padding: 10px 0; margin: 0 0 10px 0;
     }
 
@@ -250,14 +258,14 @@
     }
     #rezultat h2 {
       font-size: 10pt; letter-spacing: .6px; color: #14305a;
-      background: #eef2f8; border: none; border-left: 4px solid var(--plava);
+      background: #eef2f8; border: none; border-left: 4px solid #1e4d8b;
       margin: 13px 0 6px; padding: 3px 8px;
       break-after: avoid;
     }
     #rezultat h2:first-child { margin-top: 0; }
     #rezultat h3 {
-      font-size: 10pt; color: var(--plava);
-      margin: 9px 0 3px; padding-bottom: 1px; border-bottom: 1px dotted var(--plava);
+      font-size: 10pt; color: #1e4d8b;
+      margin: 9px 0 3px; padding-bottom: 1px; border-bottom: 1px dotted #1e4d8b;
       break-after: avoid;
     }
     #rezultat p { margin: 0 0 3px; }
@@ -269,13 +277,13 @@
     /* Izgled table u tri kolone */
     #rezultat .tabla {
       display: grid; grid-template-columns: 1fr 1fr 1fr;
-      border: 1px solid var(--plava); margin: 6px 0 4px; break-inside: avoid;
+      border: 1px solid #1e4d8b; margin: 6px 0 4px; break-inside: avoid;
     }
     #rezultat .tabla .kol { padding: 6px 10px 4px; border-right: 1px solid #c9d3e3; }
     #rezultat .tabla .kol:nth-child(3) { border-right: none; }
     #rezultat .tabla .kol-naslov {
       font-size: 8.5pt; text-transform: uppercase; letter-spacing: 1px;
-      color: var(--plava); font-weight: 700; margin-bottom: 4px;
+      color: #1e4d8b; font-weight: 700; margin-bottom: 4px;
     }
     #rezultat .tabla .dz {
       grid-column: 1 / -1; border-top: 1px solid #c9d3e3;
@@ -304,8 +312,8 @@
   }
 
   /* ---- Ručno uređivanje teksta ---- */
-  #uredi { background: #e8edf5; color: var(--plava); display: none; }
-  #uredi:hover { background: #d5deec; box-shadow: 0 3px 10px rgba(30, 77, 139, 0.14); }
+  #uredi { background: #e2efe6; color: var(--plava); display: none; }
+  #uredi:hover { background: #cde2d5; box-shadow: 0 3px 10px rgba(27, 94, 59, 0.14); }
   #uredi.aktivno { background: #fff3cd; color: #7a5b00; box-shadow: 0 0 0 2px #f0d38a; }
   #rezultat.uredjivanje {
     outline: 2px dashed var(--plava-svijetla);
@@ -320,7 +328,7 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>Priprema za nastavni čas </h1>
+  <h1>Priprema za nastavni čas <span class="verzija-oznaka">V.16</span></h1>
   <div class="podnaslov">Generisanje nastavnih pripreme za čas prema propisanom obrascu korištenjem platforme Groq AI ili Google Gemini</div>
 
   <div class="panel">
@@ -433,12 +441,12 @@
     <button id="uredi" onclick="prebaciUredjivanje()" title="Uključi/isključi ručno uređivanje teksta">✏️ Uredi</button>
     <button id="izvezWord" onclick="izvezUWord()">💾 Word</button>
     <button id="izvezi" onclick="window.print()">📤 PDF</button>
-    <button id="sacuvajDrive" onclick="sacuvajNaDrive()" style="display:none; background:#e8edf5; color:var(--plava);">☁️ Google Drive</button>
-    <button id="izvezInput" onclick="otvoriInput()" style="display:none; background:#e8edf5; color:var(--plava);">🛠️ Input</button>
-    <button id="izvezNivoi" onclick="otvoriNivoeZnanja()" style="display:none; background:#e8edf5; color:var(--plava);">📖 Lekcija</button>
+    <button id="sacuvajDrive" onclick="sacuvajNaDrive()" style="display:none; background:#e2efe6; color:var(--plava);">☁️ Google Drive</button>
+    <button id="izvezInput" onclick="otvoriInput()" style="display:none; background:#e2efe6; color:var(--plava);">🛠️ Input</button>
+    <button id="izvezNivoi" onclick="otvoriNivoeZnanja()" style="display:none; background:#e2efe6; color:var(--plava);">📖 Lekcija</button>
     <button id="provjeraCinjenica" onclick="provjeriCinjenice()" style="display:none;">🔍 Provjeri</button>
-    <button id="izvezJson" onclick="izvezJsonRezerva()" style="display:none; background:#eef1f6; color:#556;">💾 JSON</button>
-    <button id="obrisi" onclick="obrisiPripremu()" style="display:none; background:linear-gradient(135deg, #2f6bb5 0%, #1e4d8b 100%); color:#fff;">🆕 Nova priprema</button>
+    <button id="izvezJson" onclick="izvezJsonRezerva()" style="display:none; background:#eaf2ec; color:#556;">💾 JSON</button>
+    <button id="obrisi" onclick="obrisiPripremu()" style="display:none; background:linear-gradient(135deg, #2e8b57 0%, #1b5e3b 100%); color:#fff;">🆕 Nova priprema</button>
     <button id="pitajAI" onclick="pitajAI()">🤖 Proširi</button>
   </div>
   <div id="status"></div>
@@ -631,7 +639,7 @@ Oblici rada: [npr. frontalni, grupni, individualni, rad u parovima - prilagođen
 Nastavne metode: [konkretne metode prilagođene temi]
 Nastavna sredstva: [konkretno]
 Nastavna pomagala: [konkretno]
-Digitalni alati/resursi: internet, AI alati, online platforme, web sites - [dopuni konkretnim prijedlozima relevantnim za temu]
+Digitalni alati/resursi: internet, AI alati, online platforme, web sites - [dopuni konkretnim prijedlozima relevantnim za temu]. OBAVEZNO u ovom dijelu UVIJEK navedi stavku "Online alati za brzu provjeru znanja" (NIKADA ne navodi Mentimeter niti ga spominji u bilo kojem dijelu pripreme; umjesto njega uvijek piši samo "Online alati za brzu provjeru znanja"). Također u ovom dijelu UVIJEK navedi stavku "PPT, online prezentacije". Ostale konkretne resurse relevantne za temu zadrži.
 
 ${tokCasa}
 
@@ -1208,7 +1216,26 @@ const DOCX_DOCUMENT_RELS = '<?xml version="1.0" encoding="UTF-8" standalone="yes
 '<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/>' +
 '</Relationships>';
 
-const DOCX_FOOTER = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:ftr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:color w:val="555555"/><w:sz w:val="18"/></w:rPr><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:rPr><w:color w:val="555555"/><w:sz w:val="18"/></w:rPr><w:instrText xml:space="preserve"> PAGE </w:instrText></w:r><w:r><w:rPr><w:color w:val="555555"/><w:sz w:val="18"/></w:rPr><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:rPr><w:color w:val="555555"/><w:sz w:val="18"/></w:rPr><w:t>1</w:t></w:r><w:r><w:rPr><w:color w:val="555555"/><w:sz w:val="18"/></w:rPr><w:fldChar w:fldCharType="end"/></w:r></w:p></w:ftr>';
+function docxFooter() {
+  const jed = nazivJediniceZaPodnozje();
+  const esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const rp = '<w:rPr><w:color w:val="555555"/><w:sz w:val="18"/></w:rPr>';
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:ftr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+    '<w:p><w:pPr><w:tabs><w:tab w:val="clear" w:pos="4513"/><w:tab w:val="clear" w:pos="9026"/><w:tab w:val="right" w:pos="9866"/></w:tabs></w:pPr>' +
+    '<w:r>' + rp + '<w:t xml:space="preserve">' + esc(jed) + '</w:t></w:r>' +
+    '<w:r>' + rp + '<w:tab/></w:r>' +
+    '<w:r>' + rp + '<w:fldChar w:fldCharType="begin"/></w:r>' +
+    '<w:r>' + rp + '<w:instrText xml:space="preserve"> PAGE </w:instrText></w:r>' +
+    '<w:r>' + rp + '<w:fldChar w:fldCharType="separate"/></w:r>' +
+    '<w:r>' + rp + '<w:t>1</w:t></w:r>' +
+    '<w:r>' + rp + '<w:fldChar w:fldCharType="end"/></w:r></w:p></w:ftr>';
+}
+
+// Naziv nastavne jedinice za podnožje (lijevo na dnu svake stranice)
+function nazivJediniceZaPodnozje() {
+  const e = document.getElementById('jedinica');
+  return ((e && e.value) || '').replace(/\s+/g, ' ').trim();
+}
 
 const DOCX_STYLES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr></w:rPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:pPr><w:spacing w:before="0" w:after="60" w:line="340" w:lineRule="auto"/></w:pPr></w:style><w:style w:type="paragraph" w:styleId="NaslovPripreme"><w:name w:val="Naslov pripreme"/><w:basedOn w:val="Normal"/><w:pPr><w:pBdr><w:top w:val="single" w:sz="32" w:space="1" w:color="1E4D8B"/><w:bottom w:val="single" w:sz="32" w:space="1" w:color="1E4D8B"/></w:pBdr><w:shd w:val="clear" w:color="auto" w:fill="1E4D8B"/><w:spacing w:before="120" w:after="160"/><w:jc w:val="center"/></w:pPr><w:rPr><w:b/><w:color w:val="FFFFFF"/><w:spacing w:val="50"/><w:sz w:val="32"/><w:szCs w:val="32"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Ident"><w:name w:val="Ident"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:before="40" w:after="160"/><w:jc w:val="center"/></w:pPr><w:rPr><w:color w:val="555555"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:pPr><w:keepNext/><w:pBdr><w:left w:val="single" w:sz="24" w:space="4" w:color="1E4D8B"/></w:pBdr><w:shd w:val="clear" w:color="auto" w:fill="EEF2F8"/><w:spacing w:before="260" w:after="120" w:line="300" w:lineRule="auto"/><w:jc w:val="left"/></w:pPr><w:rPr><w:b/><w:color w:val="14305A"/><w:spacing w:val="12"/><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:pPr><w:keepNext/><w:pBdr><w:bottom w:val="dotted" w:sz="6" w:space="1" w:color="1E4D8B"/></w:pBdr><w:spacing w:before="180" w:after="80"/><w:jc w:val="left"/></w:pPr><w:rPr><w:b/><w:color w:val="1E4D8B"/><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="ListParagraph"><w:name w:val="List Paragraph"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:after="40"/><w:jc w:val="left"/></w:pPr></w:style><w:style w:type="paragraph" w:styleId="LinijaBiljeske"><w:name w:val="Linija za biljeske"/><w:basedOn w:val="Normal"/><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="4" w:space="1" w:color="999999"/></w:pBdr><w:spacing w:before="0" w:after="0" w:line="440" w:lineRule="exact"/><w:jc w:val="left"/></w:pPr></w:style></w:styles>';
 
@@ -1247,7 +1274,7 @@ async function generisiDocxBlob() {
   zip.folder('_rels').file('.rels', DOCX_RELS);
   zip.folder('word').file('document.xml', documentXml);
   zip.folder('word').file('styles.xml', DOCX_STYLES);
-  zip.folder('word').file('footer1.xml', DOCX_FOOTER);
+  zip.folder('word').file('footer1.xml', docxFooter());
   const dodatniNum = _docxOlBrojac.map(id => '<w:num w:numId="' + id + '"><w:abstractNumId w:val="1"/><w:lvlOverride w:ilvl="0"><w:startOverride w:val="1"/></w:lvlOverride></w:num>').join('');
   zip.folder('word').file('numbering.xml', DOCX_NUMBERING.replace('</w:numbering>', dodatniNum + '</w:numbering>'));
   zip.folder('word/_rels').file('document.xml.rels', DOCX_DOCUMENT_RELS);
@@ -1968,7 +1995,18 @@ window.addEventListener('beforeprint', () => {
   _naslovPrijeStampe = document.title;
   document.title = naziv;
 });
+// Naziv nastavne jedinice u lijevom dijelu podnožja svake odštampane stranice
+window.addEventListener('beforeprint', () => {
+  let st = document.getElementById('stampaPodnozje');
+  if (!st) { st = document.createElement('style'); st.id = 'stampaPodnozje'; document.head.appendChild(st); }
+  const jed = nazivJediniceZaPodnozje().replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  st.textContent = jed
+    ? '@page { @bottom-left { content: "' + jed + '"; text-align: left; font: 9pt \'Segoe UI\', Carlito, \'Liberation Sans\', Arial, sans-serif; color: #555; } }'
+    : '';
+});
 window.addEventListener('afterprint', () => {
+  const st = document.getElementById('stampaPodnozje');
+  if (st) st.textContent = '';
   if (_naslovPrijeStampe !== null) { document.title = _naslovPrijeStampe; }
   _naslovPrijeStampe = null;
 });
