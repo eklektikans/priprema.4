@@ -704,10 +704,14 @@ function korisnickiPrompt() {
   if (el('napPitanja').checked) posebneNapomene.push(el('napPitanja').value);
   if (el('napLinkovi').checked) posebneNapomene.push(el('napLinkovi').value);
   const slobodno = el('napSlobodno').value.trim();
-  if (slobodno) posebneNapomene.push(slobodno);
 
   const napomeneTekst = posebneNapomene.length
     ? `\n\nPOSEBNE NAPOMENE ZA OVU PRIPREMU (obavezno primijeni, imaju prednost ako su u suprotnosti sa opštim uputstvom za tip časa):\n- ${posebneNapomene.join('\n- ')}`
+    : '';
+
+  // Slobodna dodatna napomena - obavezno se razrađuje u sekciji VII, glavni dio, "Aktivnosti nastavnika"
+  const slobodnoTekst = slobodno
+    ? `\n\nDODATNA NAPOMENA NASTAVNIKA (OBAVEZNO, ima prednost nad ostalim uputstvima): "${slobodno}"\nSve što ova napomena traži MORA biti potpuno i konkretno razrađeno u sekciji VII - TOK ČASA, dio B) GLAVNI DIO ČASA, u polju "Aktivnosti nastavnika". Napiši stvarni sadržaj (npr. tačnu definiciju pojma, cjelovitu podjelu sa svim članovima, opis, primjere - šta god napomena traži), a ne samo opće tvrdnje da će nastavnik to uraditi. Ne izostavljaj ništa što napomena traži. Struktura urneka se ne mijenja: glavni dio ostaje jedna cjelina bez podjele na faze.`
     : '';
 
   return `Napravi pripremu za čas sa sljedećim podacima:
@@ -719,7 +723,7 @@ Tip časa: ${tipCasa}
 Nastava: ${nastava}
 Trajanje: ${trajanje}
 Datum izrade: ${danasnjiDatum()}
-Period realizacije: ${datumRealizacije}${uputstvoTip}${napomeneTekst}`;
+Period realizacije: ${datumRealizacije}${uputstvoTip}${napomeneTekst}${slobodnoTekst}`;
 }
 
 let razgovor = [];
